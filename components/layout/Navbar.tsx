@@ -26,28 +26,24 @@ export type NavigationSection = {
 
 const navigationData: NavigationSection[] = [
   {
-    title: "About us",
-    href: "#",
-  },
-  {
-    title: "Services",
-    href: "#",
-  },
-  {
-    title: "Work",
-    href: "#",
-  },
-  {
-    title: "Team",
-    href: "#",
+    title: "Home",
+    href: "/",
   },
   {
     title: "Pricing",
-    href: "#",
+    href: "/pricing",
   },
   {
-    title: "Awards",
-    href: "#",
+    title: "Blog",
+    href: "/blog",
+  },
+  {
+    title: "About us",
+    href: "/about-us",
+  },
+  {
+    title: "Contact us",
+    href: "/contact-us",
   },
 ];
 
