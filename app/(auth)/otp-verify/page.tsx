@@ -1,9 +1,5 @@
-import React from 'react'
+import OtpVerify from "./_page/OtpVerify";
 
-export default function OtpVerify() {
-  return (
-    <div>
-      
-    </div>
-  )
+export default function Page() {
+  return <OtpVerify />;
 }

@@ -6,7 +6,6 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 import { cn } from "@/lib/utils";
-import { StaticImageData } from "next/image";
 import Logo from "../modules/Logo";
 import Link from "next/link";
 
