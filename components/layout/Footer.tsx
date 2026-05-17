@@ -6,8 +6,9 @@ import {
   FaTwitter,
 } from "react-icons/fa";
 import { cn } from "@/lib/utils";
-import Image, { StaticImageData } from "next/image";
-import Logo from '@/app/assets/logo.png'
+import { StaticImageData } from "next/image";
+import Logo from "../modules/Logo";
+import Link from "next/link";
 
 interface FooterLink {
   name: string;
@@ -24,7 +25,6 @@ interface FooterSocialLink {
 }
 interface FooterLogo {
   url: string;
-  src: StaticImageData;
   alt: string;
   title: string;
 }
@@ -45,7 +45,6 @@ type Props = Partial<FooterProps>;
 const defaultProps: FooterProps = {
   logo: {
     url: "/",
-    src: Logo,
     alt: "logo",
     title: "Shadcnblocks.com",
   },
@@ -128,16 +127,9 @@ const Footer = (props: Props) => {
         <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
           <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
             <div className="flex items-center gap-2 lg:justify-start">
-              <a href={logo?.url}>
-                <Image
-                  src={logo?.src || ""}
-                  alt={logo?.alt || ""}
-                  width={80}
-                  height={80}
-                  title={logo?.title}
-                  className="h-7 dark:invert"
-                />
-              </a>
+              <Link href={logo?.url || '/'}>
+                <Logo />
+              </Link>
             </div>
             <p className="max-w-[70%] text-sm text-muted-foreground">
               {description}

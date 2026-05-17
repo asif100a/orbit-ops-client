@@ -1,5 +1,4 @@
 "use client";
-import Logo from "@/app/assets/logo.png";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,6 +17,7 @@ import { ArrowUpRight, TextAlignJustify } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
+import Logo from "../modules/Logo";
 
 export type NavigationSection = {
   title: string;
@@ -56,7 +56,7 @@ const LoginButton = ({ className }: { className?: string }) => (
       )}
     >
       <span className="relative z-10 transition-all duration-500 hover:cursor-pointer">
-        Login
+        Sign In
       </span>
       <div className="absolute right-1 w-8 h-8 bg-background text-foreground rounded-full flex items-center justify-center transition-all duration-500 group-hover:right-[calc(100%-36px)] group-hover:rotate-45">
         <ArrowUpRight size={16} />
@@ -98,13 +98,7 @@ const Navbar = () => {
           )}
         >
           <Link href="/">
-            <Image
-              src={Logo}
-              alt="OrbitOps"
-              width={150}
-              height={150}
-              className="w-12 h-8"
-            />
+            <Logo />
           </Link>
           <div>
             <NavigationMenu className="max-lg:hidden bg-muted p-0.5 rounded-full">

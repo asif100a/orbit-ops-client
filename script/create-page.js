@@ -28,9 +28,9 @@ const componentName = path
 const content = `import React from 'react'
 
 export default function ${componentName}() {
- return(
- <div>${componentName}</div>
- )
+  return(
+    <div>${componentName}</div>
+  )
 }`
 
 fs.writeFileSync(filePath, content);
