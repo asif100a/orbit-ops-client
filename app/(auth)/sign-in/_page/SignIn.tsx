@@ -1,13 +1,4 @@
-import React from 'react'
-
-export default function SignIn() {
-  return (
-    <div className='flex justify-center items-center my-16 md:my-32'>
-      <div className='min-w-2xs max-w-md w-full'><LoginForm /></div>
-    </div>
-  )
-}
-
+import AuthShell from "@/components/auth/AuthShell"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,50 +16,81 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
+export default function SignIn() {
+  return (
+    <AuthShell
+      title="Welcome back to OrbitOps"
+      description="Sign in to access the command center for your agency and keep every project, client, and campaign aligned."
+      aside={
+        <>
+          <div className="rounded-3xl border border-white/8 bg-[#0f1221]/80 p-5">
+            <p className="text-sm font-medium text-white">Faster approvals</p>
+            <p className="mt-2 text-sm text-[#8B89A8]">
+              Move projects forward with secure access and shared visibility.
+            </p>
+          </div>
+          <div className="rounded-3xl border border-white/8 bg-[#0f1221]/80 p-5">
+            <p className="text-sm font-medium text-white">Agency-ready security</p>
+            <p className="mt-2 text-sm text-[#8B89A8]">
+              Multi-layer protection and sign-in options for every team member.
+            </p>
+          </div>
+        </>
+      }
+    >
+      <LoginForm />
+    </AuthShell>
+  )
+}
+
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="bg-transparent">
         <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
+          <CardTitle className="text-white">Login to your account</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your email and password to access your secure OrbitOps workspace.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form className="space-y-6">
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <FieldLabel htmlFor="email" className="text-white">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
                   placeholder="m@example.com"
                   required
+                  className="text-white"
                 />
               </Field>
               <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                <div className="flex items-center gap-3">
+                  <FieldLabel htmlFor="password" className="text-white">Password</FieldLabel>
                   <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
+                    href="/forgot-password"
+                    className="ml-auto text-sm text-violet-300 underline-offset-4 transition hover:text-violet-200"
                   >
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" required className="text-white" placeholder="***********" />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
-                <Button variant="outline" type="button">
-                  Login with Google
+                <Button type="submit" className="w-full border border-white">
+                  Sign in
+                </Button>
+                <Button variant="outline" type="button" className="w-full">
+                  Continue with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account? <a href="#">Sign up</a>
+                  Don&apos;t have an account?{' '}
+                  <a href="/sign-up">Sign up</a>
                 </FieldDescription>
               </Field>
             </FieldGroup>

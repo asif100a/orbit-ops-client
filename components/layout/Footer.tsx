@@ -1,3 +1,5 @@
+import Logo from "../modules/Logo";
+
 const FOOTER_LINKS = {
   Product: ["Features", "Pricing", "Changelog", "Roadmap", "Status"],
   Resources: ["Documentation", "Blog", "Tutorials", "API Reference", "Community"],
@@ -6,16 +8,11 @@ const FOOTER_LINKS = {
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.07] px-[5%] pt-16 pb-10">
+    <footer className="bg-[#0d0f1e] border-t border-white/[0.07] px-[5%] pt-16 pb-10">
       <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 mb-16">
         {/* Brand */}
         <div>
-          <div className="flex items-center gap-2.5 font-extrabold text-lg tracking-tight text-white mb-4">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-teal-400 flex items-center justify-center text-sm">
-              ⬡
-            </div>
-            OrbitOps
-          </div>
+          <Logo />
           <p className="text-sm text-[#8B89A8] leading-relaxed max-w-[280px]">
             The all-in-one agency management platform. Built for agencies that want to scale without the chaos.
           </p>

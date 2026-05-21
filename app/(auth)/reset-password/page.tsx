@@ -1,9 +1,6 @@
-import React from 'react'
+import React from "react"
+import ResetPassword from "./_page/ResetPassword"
 
-export default function ResetPassword() {
-  return (
-    <div>
-      
-    </div>
-  )
+export default function page() {
+  return <ResetPassword />
 }

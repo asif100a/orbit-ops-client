@@ -21,7 +21,7 @@ export default function Logo() {
           <span className="text-2xl font-bold bg-linear-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent">
             Orbit
           </span>
-          <span className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+          <span className="text-2xl font-bold text-white tracking-tight">
             Ops
           </span>
         </div>

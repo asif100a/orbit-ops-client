@@ -1,9 +1,6 @@
-import React from 'react'
+import React from "react"
+import SignUp from "./_page/SignUp"
 
-export default function SignUp() {
-  return (
-    <div>
-      
-    </div>
-  )
+export default function page() {
+  return <SignUp />
 }
