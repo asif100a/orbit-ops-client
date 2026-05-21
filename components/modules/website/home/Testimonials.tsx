@@ -36,7 +36,7 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
-function Testimonials() {
+export default function Testimonials() {
   return (
     <section className="bg-[#0d0f1e] border-y border-white/[0.07] px-[5%] py-24">
       <div className="text-center">
