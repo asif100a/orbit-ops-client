@@ -1,182 +1,57 @@
-import {
-  FaFacebook,
-  FaGithub,
-  FaInstagram,
-  FaLinkedin,
-  FaTwitter,
-} from "react-icons/fa";
-import { cn } from "@/lib/utils";
-import { StaticImageData } from "next/image";
-import Logo from "../modules/Logo";
-import Link from "next/link";
-
-interface FooterLink {
-  name: string;
-  href: string;
-}
-interface FooterSection {
-  title: string;
-  links: FooterLink[];
-}
-interface FooterSocialLink {
-  icon: React.ReactNode;
-  href: string;
-  label: string;
-}
-interface FooterLogo {
-  url: string;
-  alt: string;
-  title: string;
-}
-
-interface FooterBasicProps {
-  logo?: FooterLogo;
-  description?: string;
-  sections?: FooterSection[];
-  socialLinks?: FooterSocialLink[];
-  copyright?: string;
-  legalLinks?: FooterLink[];
-  className?: string;
-}
-
-type FooterProps = FooterBasicProps;
-type Props = Partial<FooterProps>;
-
-const defaultProps: FooterProps = {
-  logo: {
-    url: "/",
-    alt: "logo",
-    title: "Shadcnblocks.com",
-  },
-  description: "Finely crafted blocks built with Shadcn UI.",
-  sections: [
-    {
-      title: "Product",
-      links: [
-        { name: "Overview", href: "#" },
-        { name: "Pricing", href: "#" },
-        { name: "Marketplace", href: "#" },
-        { name: "Features", href: "#" },
-        { name: "Integrations", href: "#" },
-      ],
-    },
-    {
-      title: "Company",
-      links: [
-        { name: "About", href: "#" },
-        { name: "Team", href: "#" },
-        { name: "Blog", href: "#" },
-        { name: "Careers", href: "#" },
-        { name: "Contact", href: "#" },
-      ],
-    },
-    {
-      title: "Support",
-      links: [
-        { name: "Help center", href: "#" },
-        { name: "Documentation", href: "#" },
-        { name: "Status", href: "#" },
-        { name: "Community", href: "#" },
-      ],
-    },
-    {
-      title: "Resources",
-      links: [
-        { name: "Guides", href: "#" },
-        { name: "Templates", href: "#" },
-        { name: "Sales", href: "#" },
-        { name: "Advertise", href: "#" },
-      ],
-    },
-  ],
-  socialLinks: [
-    {
-      icon: <FaInstagram className="size-5" />,
-      href: "#",
-      label: "Instagram",
-    },
-    { icon: <FaFacebook className="size-5" />, href: "#", label: "Facebook" },
-    { icon: <FaTwitter className="size-5" />, href: "#", label: "Twitter" },
-    { icon: <FaLinkedin className="size-5" />, href: "#", label: "LinkedIn" },
-    { icon: <FaGithub className="size-5" />, href: "#", label: "GitHub" },
-  ],
-  copyright: "© 2024 Shadcnblocks.com. All rights reserved.",
-  legalLinks: [
-    { name: "Terms and Conditions", href: "#" },
-    { name: "Privacy Policy", href: "#" },
-  ],
+const FOOTER_LINKS = {
+  Product: ["Features", "Pricing", "Changelog", "Roadmap", "Status"],
+  Resources: ["Documentation", "Blog", "Tutorials", "API Reference", "Community"],
+  Company: ["About", "Careers", "Privacy Policy", "Terms of Service", "Contact"],
 };
 
-const Footer = (props: Props) => {
-  const {
-    logo,
-    sections,
-    description,
-    socialLinks,
-    copyright,
-    legalLinks,
-    className,
-  } = {
-    ...defaultProps,
-    ...props,
-  };
-
+export default function Footer() {
   return (
-    <footer className={cn("py-32", className)}>
-      <div className="container mx-auto">
-        <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
-          <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
-            <div className="flex items-center gap-2 lg:justify-start">
-              <Link href={logo?.url || '/'}>
-                <Logo />
-              </Link>
+    <footer className="border-t border-white/[0.07] px-[5%] pt-16 pb-10">
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] gap-10 mb-16">
+        {/* Brand */}
+        <div>
+          <div className="flex items-center gap-2.5 font-extrabold text-lg tracking-tight text-white mb-4">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-teal-400 flex items-center justify-center text-sm">
+              ⬡
             </div>
-            <p className="max-w-[70%] text-sm text-muted-foreground">
-              {description}
-            </p>
-            <ul className="flex items-center space-x-6 text-muted-foreground">
-              {socialLinks?.map((social, idx) => (
-                <li key={idx} className="font-medium hover:text-primary">
-                  <a href={social.href} aria-label={social.label}>
-                    {social.icon}
+            OrbitOps
+          </div>
+          <p className="text-sm text-[#8B89A8] leading-relaxed max-w-[280px]">
+            The all-in-one agency management platform. Built for agencies that want to scale without the chaos.
+          </p>
+          <div className="flex gap-3 mt-5">
+            {["𝕏", "in", "🐙"].map((s) => (
+              <button
+                key={s}
+                className="w-8 h-8 rounded-lg border border-white/[0.07] bg-transparent text-[#8B89A8] hover:text-white hover:border-white/20 transition-all cursor-pointer text-sm flex items-center justify-center"
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </div>
+ 
+        {/* Link columns */}
+        {Object.entries(FOOTER_LINKS).map(([heading, links]) => (
+          <div key={heading}>
+            <h5 className="font-semibold text-[0.875rem] text-white mb-5">{heading}</h5>
+            <ul className="space-y-3">
+              {links.map((l) => (
+                <li key={l}>
+                  <a href="#" className="text-[0.85rem] text-[#8B89A8] hover:text-white transition-colors">
+                    {l}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="grid w-full gap-6 md:grid-cols-3 lg:gap-20">
-            {sections?.slice(0, 3).map((section, sectionIdx) => (
-              <div key={sectionIdx}>
-                <h3 className="mb-4 font-semibold tracking-tight">
-                  {section.title}
-                </h3>
-                <ul className="space-y-3 text-sm text-muted-foreground">
-                  {section.links.map((link, linkIdx) => (
-                    <li
-                      key={linkIdx}
-                      className="font-medium hover:text-primary"
-                    >
-                      <a href={link.href}>{link.name}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="mt-8 flex flex-col justify-between gap-4 border-t border-border py-8 text-xs font-medium text-muted-foreground md:flex-row md:items-center md:text-left">
-          <p className="order-2 lg:order-1">{copyright}</p>
-          <ul className="order-1 flex flex-col gap-2 md:order-2 md:flex-row">
-            {legalLinks?.map((link, idx) => (
-              <li key={idx} className="hover:text-primary">
-                <a href={link.href}> {link.name}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        ))}
+      </div>
+ 
+      <div className="flex flex-col sm:flex-row items-center justify-between pt-8 border-t border-white/[0.07] gap-3">
+        <p className="text-xs text-[#8B89A8]">© 2025 OrbitOps, Inc. All rights reserved.</p>
+        <p className="text-xs text-[#8B89A8]">🔒 SOC 2 Type II · GDPR Ready · 99.9% Uptime</p>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

@@ -1,8 +1,7 @@
-import Hero from "@/components/modules/website/home/Hero";
-
 export default function Home() {
   return (
     <div className="bg-[#070810] text-[#F0EEF8] font-sans overflow-x-hidden">
+      <Navbar />
       <Hero />
       <DashboardPreview />
       <Features />
@@ -12,6 +11,7 @@ export default function Home() {
       <Pricing />
       <Testimonials />
       <CTA />
+      <Footer />
     </div>
   );
 }
