@@ -21,7 +21,7 @@ const CONTACT_OPTIONS = [
 
 export default function ContactOptions() {
   return (
-    <div className="px-[5%] pb-14 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="bg-[#0d0f1e] px-[5%] pb-14 grid grid-cols-1 md:grid-cols-3 gap-4">
       {CONTACT_OPTIONS.map((o) => (
         <div
           key={o.title}
