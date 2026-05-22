@@ -1,4 +1,4 @@
-import AuthShell from "@/components/auth/AuthShell"
+import AuthShell from "@/components/modules/auth/AuthShell";
 import { Button } from "@/components/ui/button"
 import {
   Card,

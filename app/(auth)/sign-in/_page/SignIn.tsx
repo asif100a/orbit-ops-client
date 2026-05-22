@@ -1,4 +1,3 @@
-import AuthShell from "@/components/auth/AuthShell"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -15,6 +14,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import AuthShell from "@/components/modules/auth/AuthShell";
 
 export default function SignIn() {
   return (
