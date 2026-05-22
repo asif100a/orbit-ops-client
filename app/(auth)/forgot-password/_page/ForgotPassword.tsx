@@ -1,19 +1,19 @@
-import AuthShell from "@/components/auth/AuthShell"
-import { Button } from "@/components/ui/button"
+import AuthShell from "@/components/auth/AuthShell";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export default function ForgotPassword() {
   return (
@@ -38,11 +38,12 @@ export default function ForgotPassword() {
       }
     >
       <div className="flex flex-col gap-6">
-        <Card>
+        <Card className="bg-transparent">
           <CardHeader>
-            <CardTitle>Forgot your password?</CardTitle>
+            <CardTitle className="text-white">Forgot your password?</CardTitle>
             <CardDescription>
-              Enter the email address associated with your account, and we&apos;ll send a recovery link.
+              Enter the email address associated with your account, and
+              we&apos;ll send a recovery link.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -50,10 +51,16 @@ export default function ForgotPassword() {
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="email">Email</FieldLabel>
-                  <Input id="email" type="email" placeholder="jane@example.com" required />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="jane@example.com"
+                    required
+                    className="text-white"
+                  />
                 </Field>
                 <Field>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full border border-white">
                     Send recovery link
                   </Button>
                   <FieldDescription className="text-center">
@@ -66,5 +73,5 @@ export default function ForgotPassword() {
         </Card>
       </div>
     </AuthShell>
-  )
+  );
 }

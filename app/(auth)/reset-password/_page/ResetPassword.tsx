@@ -1,19 +1,19 @@
-import AuthShell from "@/components/auth/AuthShell"
-import { Button } from "@/components/ui/button"
+import AuthShell from "@/components/auth/AuthShell";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export default function ResetPassword() {
   return (
@@ -38,18 +38,21 @@ export default function ResetPassword() {
       }
     >
       <div className="flex flex-col gap-6">
-        <Card>
+        <Card className="bg-transparent">
           <CardHeader>
-            <CardTitle>Reset your password</CardTitle>
+            <CardTitle className="text-white">Reset your password</CardTitle>
             <CardDescription>
-              Enter a new password and confirm it below to complete the reset process.
+              Enter a new password and confirm it below to complete the reset
+              process.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form className="space-y-6">
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="password">New password</FieldLabel>
+                  <FieldLabel htmlFor="password" className="text-white">
+                    New password
+                  </FieldLabel>
                   <Input
                     id="password"
                     type="password"
@@ -58,7 +61,9 @@ export default function ResetPassword() {
                   />
                 </Field>
                 <Field>
-                  <FieldLabel htmlFor="confirm-password">Confirm password</FieldLabel>
+                  <FieldLabel htmlFor="confirm-password" className="text-white">
+                    Confirm password
+                  </FieldLabel>
                   <Input
                     id="confirm-password"
                     type="password"
@@ -67,7 +72,7 @@ export default function ResetPassword() {
                   />
                 </Field>
                 <Field>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full border border-white">
                     Update password
                   </Button>
                   <FieldDescription className="text-center">
@@ -80,5 +85,5 @@ export default function ResetPassword() {
         </Card>
       </div>
     </AuthShell>
-  )
+  );
 }
