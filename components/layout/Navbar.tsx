@@ -4,13 +4,20 @@ import Link from "next/link";
 import Logo from "../modules/Logo";
 
 const NAV_LINKS = [
-  "Features",
-  "Pricing",
-  "Integrations",
-  "Blog",
-  "About Us",
-  "Contact Us",
+  { label: "Features", link: "featuresSection" },
+  { label: "Pricing", link: "pricingSection" },
+  { label: "Integrations", link: "integrationsSection" },
+  { label: "Blog", link: "/blog" },
+  { label: "About Us", link: "/about-us" },
+  { label: "Contact Us", link: "/contact-us" },
 ];
+
+function handleScroll(sectionId: string) {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+}
 
 export default function Navbar() {
   return (
@@ -22,14 +29,23 @@ export default function Navbar() {
 
       {/* Links */}
       <div className="hidden md:flex items-center gap-8">
-        {NAV_LINKS.map((l) => (
-          <a
-            key={l}
-            href="#"
+        {NAV_LINKS.slice(0, 3).map((l) => (
+          <button
+            key={l.label}
+            onClick={() => handleScroll(l.link)}
+            className="text-sm text-[#8B89A8] hover:text-white transition-colors cursor-pointer"
+          >
+            {l.label}
+          </button>
+        ))}
+        {NAV_LINKS.slice(3).map((l) => (
+          <Link
+            key={l.label}
+            href={l.link}
             className="text-sm text-[#8B89A8] hover:text-white transition-colors"
           >
-            {l}
-          </a>
+            {l.label}
+          </Link>
         ))}
       </div>
 

@@ -37,7 +37,7 @@ const TEAM = [
 
 export default function Team() {
   return (
-    <section className="px-[5%] py-16">
+    <section className="bg-[#0d0f1e] border-y border-white/[0.07] px-[5%] py-16">
       <SectionTag>The Team</SectionTag>
       <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
         The people building OrbitOps

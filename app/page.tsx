@@ -13,11 +13,17 @@ export default function Home() {
     <div className="bg-[#070810] text-[#F0EEF8] font-sans overflow-x-hidden">
       <Hero />
       <DashboardPreview />
-      <Features />
+      <div id="featuresSection">
+        <Features />
+      </div>
       <Roles />
       <AISection />
-      <Integrations />
-      <Pricing />
+      <div id="integrationsSection">
+        <Integrations />
+      </div>
+      <div id="pricingSection">
+        <Pricing />
+      </div>
       <Testimonials />
       <CTA />
     </div>

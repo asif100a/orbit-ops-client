@@ -9,7 +9,7 @@ const PILLARS = [
 
 export default function Mission() {
   return (
-    <section className="px-[5%] py-16 border-t border-white/[0.07] grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <section className="bg-[#0d0f1e] border-y border-white/[0.07] px-[5%] py-16 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
       {/* Text */}
       <div>
         <SectionTag>Mission</SectionTag>

@@ -9,7 +9,7 @@ const MISSION_STATS = [
 
 export default function AboutHero() {
   return (
-    <section className="px-[5%] pt-20 pb-16 relative overflow-hidden">
+    <section className="bg-[#0d0f1e] px-[5%] pt-32 pb-16 relative overflow-hidden">
       {/* Glows */}
       <div className="absolute top-0 right-[-5%] w-[600px] h-[500px] bg-[radial-gradient(ellipse,rgba(108,99,255,0.12)_0%,transparent_70%)] pointer-events-none" />
       <div className="absolute bottom-[-20%] right-[20%] w-[300px] h-[300px] bg-[radial-gradient(ellipse,rgba(78,205,196,0.08)_0%,transparent_70%)] pointer-events-none" />
