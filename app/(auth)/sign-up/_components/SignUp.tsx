@@ -1,4 +1,6 @@
-import AuthShell from "@/components/modules/auth/AuthShell";
+'use client';
+
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,32 +21,39 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
 type SignUpFormValues = {
+  name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 };
 
 const SignUpForm = () => {
-   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<SignUpFormValues>({
     mode: "onBlur",
     defaultValues: {
+      name: "",
       email: "",
       password: "",
+      confirmPassword: "",
     },
   });
+
+  const passwordValue = watch("password");
 
   const onSubmit = (data: SignUpFormValues) => {
     startTransition(() => {
       setStatusMessage(
-        `Sign-in form is ready for your auth workflow. Connect Redux or RTK Query here later.`,
+        "Sign-up form is ready for your auth workflow. Connect Redux or RTK Query here later."
       );
-      console.info("Sign-in submitted", data);
+      console.info("Sign-up submitted", data);
     });
   };
 
@@ -52,7 +61,7 @@ const SignUpForm = () => {
     event.preventDefault();
     void handleSubmit(onSubmit)(event);
   };
-  
+
   return (
     <div className="flex flex-col gap-6">
       <Card className="bg-transparent">
@@ -64,7 +73,13 @@ const SignUpForm = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleFormSubmit}>
+            {statusMessage ? (
+              <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                {statusMessage}
+              </div>
+            ) : null}
+
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="name" className="text-white">
@@ -74,10 +89,22 @@ const SignUpForm = () => {
                   id="name"
                   type="text"
                   placeholder="Jane Doe"
-                  required
-                  className="text-white"
+                  className={cn("text-white", errors.name && "border-red-400")}
+                  aria-invalid={!!errors.name}
+                  disabled={isPending || isSubmitting}
+                  {...register("name", {
+                    required: "Full name is required",
+                    minLength: {
+                      value: 2,
+                      message: "Name must be at least 2 characters",
+                    },
+                  })}
                 />
+                {errors.name ? (
+                  <p className="mt-2 text-sm text-red-300">{errors.name.message}</p>
+                ) : null}
               </Field>
+
               <Field>
                 <FieldLabel htmlFor="email" className="text-white">
                   Email
@@ -86,10 +113,22 @@ const SignUpForm = () => {
                   id="email"
                   type="email"
                   placeholder="jane@example.com"
-                  required
-                  className="text-white"
+                  className={cn("text-white", errors.email && "border-red-400")}
+                  aria-invalid={!!errors.email}
+                  disabled={isPending || isSubmitting}
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Enter a valid email address",
+                    },
+                  })}
                 />
+                {errors.email ? (
+                  <p className="mt-2 text-sm text-red-300">{errors.email.message}</p>
+                ) : null}
               </Field>
+
               <Field>
                 <FieldLabel htmlFor="password" className="text-white">
                   Password
@@ -98,10 +137,22 @@ const SignUpForm = () => {
                   id="password"
                   type="password"
                   placeholder="***********"
-                  required
-                  className="text-white"
+                  className={cn("text-white", errors.password && "border-red-400")}
+                  aria-invalid={!!errors.password}
+                  disabled={isPending || isSubmitting}
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters",
+                    },
+                  })}
                 />
+                {errors.password ? (
+                  <p className="mt-2 text-sm text-red-300">{errors.password.message}</p>
+                ) : null}
               </Field>
+
               <Field>
                 <FieldLabel htmlFor="confirm-password" className="text-white">
                   Confirm password
@@ -110,13 +161,29 @@ const SignUpForm = () => {
                   id="confirm-password"
                   type="password"
                   placeholder="***********"
-                  required
-                  className="text-white"
+                  className={cn("text-white", errors.confirmPassword && "border-red-400")}
+                  aria-invalid={!!errors.confirmPassword}
+                  disabled={isPending || isSubmitting}
+                  {...register("confirmPassword", {
+                    required: "Please confirm your password",
+                    validate: (value) =>
+                      value === passwordValue || "Passwords do not match",
+                  })}
                 />
+                {errors.confirmPassword ? (
+                  <p className="mt-2 text-sm text-red-300">
+                    {errors.confirmPassword.message}
+                  </p>
+                ) : null}
               </Field>
+
               <Field>
-                <Button type="submit" className="w-full border border-white">
-                  Create account
+                <Button
+                  type="submit"
+                  className="w-full border border-white"
+                  disabled={isPending || isSubmitting}
+                >
+                  {isPending || isSubmitting ? "Creating account..." : "Create account"}
                 </Button>
                 <Button variant="outline" type="button" className="w-full">
                   Continue with Google
