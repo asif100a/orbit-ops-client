@@ -126,7 +126,9 @@ export function LoginForm({
                 </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{' '}
-                  <a href="/sign-up">Sign up</a>
+                  <Link href="/sign-up" className="underline hover:text-white">
+                    Sign up
+                  </Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

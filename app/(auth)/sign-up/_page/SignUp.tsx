@@ -14,6 +14,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import Link from "next/link";
 
 export default function SignUp() {
   return (
@@ -78,7 +79,7 @@ export default function SignUp() {
                     Continue with Google
                   </Button>
                   <FieldDescription className="text-center">
-                    Already have an account? <a href="/sign-in">Sign in</a>
+                    Already have an account? <Link href="/sign-in" className="underline hover:text-white">Sign in</Link>
                   </FieldDescription>
                 </Field>
               </FieldGroup>
