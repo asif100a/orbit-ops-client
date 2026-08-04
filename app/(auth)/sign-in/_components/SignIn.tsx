@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,9 +15,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import AuthShell from "@/components/modules/auth/AuthShell";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
 type SignInFormValues = {
@@ -26,34 +25,10 @@ type SignInFormValues = {
   password: string;
 };
 
-export default function SignIn() {
-  return (
-    <AuthShell
-      title="Welcome back to OrbitOps"
-      description="Sign in to access the command center for your agency and keep every project, client, and campaign aligned."
-      aside={
-        <>
-          <div className="rounded-3xl border border-white/8 bg-[#0f1221]/80 p-5">
-            <p className="text-sm font-medium text-white">Faster approvals</p>
-            <p className="mt-2 text-sm text-[#8B89A8]">
-              Move projects forward with secure access and shared visibility.
-            </p>
-          </div>
-          <div className="rounded-3xl border border-white/8 bg-[#0f1221]/80 p-5">
-            <p className="text-sm font-medium text-white">Agency-ready security</p>
-            <p className="mt-2 text-sm text-[#8B89A8]">
-              Multi-layer protection and sign-in options for every team member.
-            </p>
-          </div>
-        </>
-      }
-    >
-      <LoginForm />
-    </AuthShell>
-  );
-}
-
-export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+export default function SignInForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -72,10 +47,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
   const onSubmit = (data: SignInFormValues) => {
     startTransition(() => {
       setStatusMessage(
-        `Sign-in form is ready for your auth workflow. Connect Redux or RTK Query here later.`
+        `Sign-in form is ready for your auth workflow. Connect Redux or RTK Query here later.`,
       );
       console.info("Sign-in submitted", data);
     });
+  };
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void handleSubmit(onSubmit)(event);
   };
 
   return (
@@ -84,11 +64,12 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         <CardHeader>
           <CardTitle className="text-white">Login to your account</CardTitle>
           <CardDescription>
-            Enter your email and password to access your secure OrbitOps workspace.
+            Enter your email and password to access your secure OrbitOps
+            workspace.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <form className="space-y-6" onSubmit={handleFormSubmit}>
             {statusMessage ? (
               <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
                 {statusMessage}
@@ -117,7 +98,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   })}
                 />
                 {errors.email ? (
-                  <p className="mt-2 text-sm text-red-300">{errors.email.message}</p>
+                  <p className="mt-2 text-sm text-red-300">
+                    {errors.email.message}
+                  </p>
                 ) : null}
               </Field>
 
@@ -137,7 +120,10 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   id="password"
                   type="password"
                   placeholder="***********"
-                  className={cn("text-white", errors.password && "border-red-400")}
+                  className={cn(
+                    "text-white",
+                    errors.password && "border-red-400",
+                  )}
                   aria-invalid={!!errors.password}
                   disabled={isPending || isSubmitting}
                   {...register("password", {
@@ -149,7 +135,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   })}
                 />
                 {errors.password ? (
-                  <p className="mt-2 text-sm text-red-300">{errors.password.message}</p>
+                  <p className="mt-2 text-sm text-red-300">
+                    {errors.password.message}
+                  </p>
                 ) : null}
               </Field>
 
@@ -165,7 +153,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                   Continue with Google
                 </Button>
                 <FieldDescription className="text-center">
-                  Don&apos;t have an account?{' '}
+                  Don&apos;t have an account?{" "}
                   <Link href="/sign-up" className="underline hover:text-white">
                     Sign up
                   </Link>
