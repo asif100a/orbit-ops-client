@@ -18,7 +18,8 @@ import {
 import { Input } from "@/components/ui/input";
 import AuthShell from "@/components/modules/auth/AuthShell";
 import Link from "next/link";
-import type { ComponentProps, FormEvent } from "react";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 
 type SignInFormValues = {
   email: string;
@@ -49,22 +50,33 @@ export default function SignIn() {
     >
       <LoginForm />
     </AuthShell>
-  )
+  );
 }
 
-export function LoginForm({
-  className,
-  values,
-  onValueChange,
-  onFormSubmit,
-  ...props
-}: ComponentProps<"div"> & {
-  values?: SignInFormValues;
-  onValueChange?: (field: keyof SignInFormValues, value: string) => void;
-  onFormSubmit?: (event: FormEvent<HTMLFormElement>) => void;
-}) {
-  const emailValue = values?.email ?? "";
-  const passwordValue = values?.password ?? "";
+export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignInFormValues>({
+    mode: "onBlur",
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = (data: SignInFormValues) => {
+    startTransition(() => {
+      setStatusMessage(
+        `Sign-in form is ready for your auth workflow. Connect Redux or RTK Query here later.`
+      );
+      console.info("Sign-in submitted", data);
+    });
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -76,27 +88,44 @@ export function LoginForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-6" onSubmit={(event) => onFormSubmit?.(event)}>
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            {statusMessage ? (
+              <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                {statusMessage}
+              </div>
+            ) : null}
+
             <FieldGroup>
               <Field>
-                <FieldLabel htmlFor="email" className="text-white">Email</FieldLabel>
+                <FieldLabel htmlFor="email" className="text-white">
+                  Email
+                </FieldLabel>
                 <Input
                   id="email"
-                  name="email"
                   type="email"
-                  value={emailValue}
-                  onChange={(event) =>
-                    onValueChange?.("email", event.target.value)
-                  }
-                  placeholder="m@example.com"
                   autoComplete="email"
-                  required
-                  className="text-white"
+                  placeholder="m@example.com"
+                  className={cn("text-white", errors.email && "border-red-400")}
+                  aria-invalid={!!errors.email}
+                  disabled={isPending || isSubmitting}
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Enter a valid email address",
+                    },
+                  })}
                 />
+                {errors.email ? (
+                  <p className="mt-2 text-sm text-red-300">{errors.email.message}</p>
+                ) : null}
               </Field>
+
               <Field>
                 <div className="flex items-center gap-3">
-                  <FieldLabel htmlFor="password" className="text-white">Password</FieldLabel>
+                  <FieldLabel htmlFor="password" className="text-white">
+                    Password
+                  </FieldLabel>
                   <Link
                     href="/forgot-password"
                     className="ml-auto text-sm text-violet-300 underline-offset-4 transition hover:text-violet-200"
@@ -106,20 +135,31 @@ export function LoginForm({
                 </div>
                 <Input
                   id="password"
-                  name="password"
                   type="password"
-                  value={passwordValue}
-                  onChange={(event) =>
-                    onValueChange?.("password", event.target.value)
-                  }
-                  required
-                  className="text-white"
                   placeholder="***********"
+                  className={cn("text-white", errors.password && "border-red-400")}
+                  aria-invalid={!!errors.password}
+                  disabled={isPending || isSubmitting}
+                  {...register("password", {
+                    required: "Password is required",
+                    minLength: {
+                      value: 8,
+                      message: "Password must be at least 8 characters",
+                    },
+                  })}
                 />
+                {errors.password ? (
+                  <p className="mt-2 text-sm text-red-300">{errors.password.message}</p>
+                ) : null}
               </Field>
+
               <Field>
-                <Button type="submit" className="w-full border border-white">
-                  Sign in
+                <Button
+                  type="submit"
+                  className="w-full border border-white"
+                  disabled={isPending || isSubmitting}
+                >
+                  {isPending || isSubmitting ? "Signing in..." : "Sign in"}
                 </Button>
                 <Button variant="outline" type="button" className="w-full">
                   Continue with Google
