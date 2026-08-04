@@ -1,10 +1,10 @@
 import React from 'react'
-import Blog from './_page/Blog';
+import Pricing from './_page/Pricing';
 
 export default function page() {
   return (
     <div>
-      <Blog />
+        <Pricing />
     </div>
   )
 }

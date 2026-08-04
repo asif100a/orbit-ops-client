@@ -3,9 +3,9 @@ import Link from "next/link";
 import Logo from "../modules/Logo";
 
 const NAV_LINKS = [
-  { label: "Features", link: "featuresSection" },
-  { label: "Pricing", link: "pricingSection" },
-  { label: "Integrations", link: "integrationsSection" },
+  { label: "Home", link: "/" },
+  { label: "Features", link: "/features" },
+  { label: "Pricing", link: "/pricing" },
   { label: "Blog", link: "/blog" },
   { label: "About Us", link: "/about-us" },
   { label: "Contact Us", link: "/contact-us" },
@@ -28,16 +28,7 @@ export default function Navbar() {
 
       {/* Links */}
       <div className="hidden md:flex items-center gap-8">
-        {NAV_LINKS.slice(0, 3).map((l) => (
-          <button
-            key={l.label}
-            onClick={() => handleScroll(l.link)}
-            className="text-sm text-[#8B89A8] hover:text-white transition-colors cursor-pointer"
-          >
-            {l.label}
-          </button>
-        ))}
-        {NAV_LINKS.slice(3).map((l) => (
+        {NAV_LINKS.map((l) => (
           <Link
             key={l.label}
             href={l.link}

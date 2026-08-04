@@ -10,7 +10,7 @@ import Testimonials from "@/components/modules/website/home/Testimonials";
 
 export default function Home() {
   return (
-    <div className="bg-[#070810] text-[#F0EEF8] font-sans overflow-x-hidden">
+    <div className="overflow-x-hidden">
       <Hero />
       <DashboardPreview />
       <div id="featuresSection">

@@ -1,10 +1,10 @@
 import React from 'react'
-import Blog from './_page/Blog';
+import Features from './_page/Features';
 
 export default function page() {
   return (
     <div>
-      <Blog />
+        <Features />
     </div>
   )
 }
