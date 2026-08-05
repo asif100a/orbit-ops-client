@@ -12,7 +12,7 @@ import {
   CHANG_PASS_TOKEN_KEY,
   FORGOT_PASS_TOKEN_KEY,
   OTP_TOKEN_KEY,
-} from "@/lib/constants/auth.constants";
+} from "@/constants/auth.constants";
 import { logout } from "@/store/features/authSlice";
 
 type BaseQueryArg = Parameters<typeof baseQuery>[0];
