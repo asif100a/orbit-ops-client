@@ -1,3 +1,5 @@
+import { VERIFY_TOKEN_KEY } from "@/constants/auth.constants";
+import { tagTypes } from "../tagTypes";
 import { baseApi } from "./_base/baseApi";
 
 const BASE_POINT = "/auth";
@@ -27,6 +29,14 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: [tagTypes.auth, tagTypes.user],
+      onQueryStarted: async (arg, api) => {
+        const { data } = await api.queryFulfilled;
+        sessionStorage.setItem(
+          VERIFY_TOKEN_KEY,
+          data?.data?.verifyToken
+        )
+      },
     }),
   }),
   overrideExisting: true,

@@ -11,7 +11,7 @@ import { setUser, logout } from "@/store/features/authSlice";
 import {
   CHANG_PASS_TOKEN_KEY,
   FORGOT_PASS_TOKEN_KEY,
-  OTP_TOKEN_KEY,
+  VERIFY_TOKEN_KEY,
 } from "@/constants/auth.constants";
 
 type BaseQueryArg = Parameters<typeof baseQuery>[0];
@@ -23,12 +23,12 @@ const baseQuery = fetchBaseQuery({
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     if (typeof window !== "undefined") {
-      const otpToken = sessionStorage.getItem(OTP_TOKEN_KEY);
+      const verifyToken = sessionStorage.getItem(VERIFY_TOKEN_KEY);
       const forgotPassToken = sessionStorage.getItem(FORGOT_PASS_TOKEN_KEY);
       const changePassToken = sessionStorage.getItem(CHANG_PASS_TOKEN_KEY);
 
-      if (otpToken) {
-        headers.set("Authorization", otpToken);
+      if (verifyToken) {
+        headers.set("Authorization", verifyToken);
       }
       if (forgotPassToken) {
         headers.set("Authorization", forgotPassToken);
