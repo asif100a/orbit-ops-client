@@ -17,8 +17,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRegisterMutation } from "@/store/api/authApi";
 
 type SignUpFormValues = {
   name: string;
@@ -29,7 +30,7 @@ type SignUpFormValues = {
 
 const SignUpForm = () => {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const {
     register,
@@ -46,21 +47,41 @@ const SignUpForm = () => {
     },
   });
 
+  const [registerUser, { isLoading }] = useRegisterMutation();
+
   const passwordValue = watch("password");
 
-  const onSubmit = (data: SignUpFormValues) => {
-    startTransition(() => {
-      setStatusMessage(
-        "Sign-up form is ready for your auth workflow. Connect Redux or RTK Query here later."
-      );
-      console.info("Sign-up submitted", data);
-    });
+  const onSubmit = async (data: SignUpFormValues) => {
+    setStatusMessage(null);
+    setErrorMessage(null);
+
+    const payload = {
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+      role: "USER",
+      companyId: null,
+      departmentId: null,
+      teamId: null,
+    };
+
+    try {
+      const res = await registerUser(payload).unwrap();
+      setStatusMessage(res?.message || "Registration successful!");
+    } catch (err: any) {
+      const msg =
+        err?.data?.message || err?.error || "Failed to create account. Please try again.";
+      setErrorMessage(typeof msg === "string" ? msg : "Failed to create account.");
+    }
   };
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     void handleSubmit(onSubmit)(event);
   };
+
+  const isFormLoading = isLoading || isSubmitting;
 
   return (
     <div className="flex flex-col gap-6">
@@ -80,6 +101,12 @@ const SignUpForm = () => {
               </div>
             ) : null}
 
+            {errorMessage ? (
+              <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                {errorMessage}
+              </div>
+            ) : null}
+
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="name" className="text-white">
@@ -91,7 +118,7 @@ const SignUpForm = () => {
                   placeholder="Jane Doe"
                   className={cn("text-white", errors.name && "border-red-400")}
                   aria-invalid={!!errors.name}
-                  disabled={isPending || isSubmitting}
+                  disabled={isFormLoading}
                   {...register("name", {
                     required: "Full name is required",
                     minLength: {
@@ -115,7 +142,7 @@ const SignUpForm = () => {
                   placeholder="jane@example.com"
                   className={cn("text-white", errors.email && "border-red-400")}
                   aria-invalid={!!errors.email}
-                  disabled={isPending || isSubmitting}
+                  disabled={isFormLoading}
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -139,7 +166,7 @@ const SignUpForm = () => {
                   placeholder="***********"
                   className={cn("text-white", errors.password && "border-red-400")}
                   aria-invalid={!!errors.password}
-                  disabled={isPending || isSubmitting}
+                  disabled={isFormLoading}
                   {...register("password", {
                     required: "Password is required",
                     minLength: {
@@ -163,7 +190,7 @@ const SignUpForm = () => {
                   placeholder="***********"
                   className={cn("text-white", errors.confirmPassword && "border-red-400")}
                   aria-invalid={!!errors.confirmPassword}
-                  disabled={isPending || isSubmitting}
+                  disabled={isFormLoading}
                   {...register("confirmPassword", {
                     required: "Please confirm your password",
                     validate: (value) =>
@@ -181,9 +208,9 @@ const SignUpForm = () => {
                 <Button
                   type="submit"
                   className="w-full border border-white"
-                  disabled={isPending || isSubmitting}
+                  disabled={isFormLoading}
                 >
-                  {isPending || isSubmitting ? "Creating account..." : "Create account"}
+                  {isFormLoading ? "Creating account..." : "Create account"}
                 </Button>
                 <Button variant="outline" type="button" className="w-full">
                   Continue with Google
