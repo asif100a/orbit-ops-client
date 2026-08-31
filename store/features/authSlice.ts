@@ -1,4 +1,4 @@
-import { ACCESS_TOKEN_KEY } from "@/lib/constants/auth.constants";
+import { ACCESS_TOKEN_KEY } from "@/constants/auth.constants";
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import type { RootState } from "../store";

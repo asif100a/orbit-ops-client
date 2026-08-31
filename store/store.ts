@@ -12,8 +12,8 @@ import {
 } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import { baseApi } from "./api/_base/baseApi";
-import authSlice from "./features/authSlice";
-import geoLocationSlice from "./features/geoLocationSlice";
+import authReducer from "./features/authSlice";
+import geoLocationReducer from "./features/geoLocationSlice";
 
 const createNoopStorage = (): NoopStorage => {
   return {
@@ -36,18 +36,18 @@ const storage =
 
 const persistedAuthReducer = persistReducer(
   {
-    key: "ensinor:auth",
+    key: "orbitops:auth",
     storage,
   },
-  authSlice
+  authReducer
 );
 
 const persistedGeoLocationReducer = persistReducer(
   {
-    key: "geoLocation",
+    key: "orbitops:geoLocation",
     storage,
   },
-  geoLocationSlice
+  geoLocationReducer
 );
 
 export const store = configureStore({
@@ -56,8 +56,8 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     geoLocation: persistedGeoLocationReducer,
   },
-  middleware: (getDefaultMiddlewares) =>
-    getDefaultMiddlewares({
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
@@ -66,5 +66,6 @@ export const store = configureStore({
 
 export const persistor = persistStore(store);
 
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = typeof store;
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

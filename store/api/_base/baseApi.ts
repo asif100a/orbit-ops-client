@@ -6,44 +6,43 @@ import {
 } from "@reduxjs/toolkit/query/react";
 import { tagTypesList } from "@/store/tagTypes";
 import type { RootState } from "@/store/store";
-import { getBackendBaseUrl } from "@/config/env.config";
-import { setUser } from "@/store/features/authSlice";
+import { backendUrl } from "@/constants/env.config";
+import { setUser, logout } from "@/store/features/authSlice";
 import {
   CHANG_PASS_TOKEN_KEY,
   FORGOT_PASS_TOKEN_KEY,
   OTP_TOKEN_KEY,
 } from "@/constants/auth.constants";
-import { logout } from "@/store/features/authSlice";
 
 type BaseQueryArg = Parameters<typeof baseQuery>[0];
 type BaseQueryResult = Awaited<ReturnType<typeof baseQuery>>;
 type ExtraOptions = Record<string, unknown>;
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: getBackendBaseUrl(), // Base Url
+  baseUrl: backendUrl || "http://localhost:8080/api/v1",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
-    const otpToken = sessionStorage.getItem(OTP_TOKEN_KEY);
-    const forgotPassToken = sessionStorage.getItem(FORGOT_PASS_TOKEN_KEY);
-    const changePassToken = sessionStorage.getItem(CHANG_PASS_TOKEN_KEY);
+    if (typeof window !== "undefined") {
+      const otpToken = sessionStorage.getItem(OTP_TOKEN_KEY);
+      const forgotPassToken = sessionStorage.getItem(FORGOT_PASS_TOKEN_KEY);
+      const changePassToken = sessionStorage.getItem(CHANG_PASS_TOKEN_KEY);
+
+      if (otpToken) {
+        headers.set("Authorization", otpToken);
+      }
+      if (forgotPassToken) {
+        headers.set("Authorization", forgotPassToken);
+      }
+      if (changePassToken) {
+        headers.set("token", changePassToken);
+      }
+    }
 
     const token = (getState() as RootState).auth.token;
-    // Main token
     if (token) {
       headers.set("Authorization", token);
     }
-    // OTP token
-    if (otpToken) {
-      headers.set("Authorization", otpToken);
-    }
-    // Forgot pass token
-    if (forgotPassToken) {
-      headers.set("Authorization", forgotPassToken);
-    }
-    // Change pass token
-    if (changePassToken) {
-      headers.set("token", changePassToken);
-    }
+
     return headers;
   },
 });
@@ -60,8 +59,8 @@ const baseQueryWithRefreshToken: BaseQueryFn<
     const res = (await baseQuery(
       { url: "/auth/refresh-token", method: "POST", body: {} },
       api,
-      extraOptions,
-    )) as { data: { accessToken?: string } };
+      extraOptions
+    )) as { data?: { accessToken?: string } };
 
     if (res?.data?.accessToken) {
       const user = (api.getState() as RootState).auth.user;
@@ -70,7 +69,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
         setUser({
           user,
           token: res.data.accessToken,
-        }),
+        })
       );
 
       result = await baseQuery(args, api, extraOptions);
