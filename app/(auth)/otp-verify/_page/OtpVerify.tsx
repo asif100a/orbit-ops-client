@@ -23,22 +23,25 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useVerifyOTPMutation } from "@/store/api/authApi";
-import { useRouter } from "next/navigation";
+import { useResendOTPMutation, useVerifyOTPMutation } from "@/store/api/authApi";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 const OTP_LENGTH = 6;
-const RESEND_COOLDOWN_SECONDS = 60;
+const RESEND_COOLDOWN_SECONDS = 180;
 
 export default function OtpVerify() {
   const [otp, setOtp] = useState("");
-  const [isVerifying, setIsVerifying] = useState(false);
-  const [isResending, setIsResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const email = searchParams.get('email');
+  const otpType = searchParams.get('otpType');
 
   const [verifyOTP, { isLoading: isVerifyOtpLoading }] = useVerifyOTPMutation();
+  const [resendOTP, {isLoading: isResendLoading}] = useResendOTPMutation()
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -74,7 +77,6 @@ export default function OtpVerify() {
       return;
     }
 
-    setIsVerifying(true);
     try {
       const response = await verifyOTP({ otp }).unwrap();
       if (response.success) {
@@ -87,26 +89,26 @@ export default function OtpVerify() {
       const {message} = getErrorMessage(err);
 
       setError(message ?? "That code didn't work. Please try again.");
-    } finally {
-      setIsVerifying(false);
     }
   }
 
   async function handleResend() {
-    if (cooldown > 0 || isResending) return;
+    if (cooldown > 0 || isResendLoading) return;
+    if(!email) return setError('No email found!');
+    if(!otpType) return setError('No otp type found!')
 
-    setIsResending(true);
     setError(null);
     try {
-      // Replace with your real resend call, e.g.:
-      // await resendOtp();
-      await new Promise((resolve) => setTimeout(resolve, 600));
-      setOtp("");
-      startCooldown();
+      const response  = await resendOTP({
+        email,
+        otpType: otpType as any
+      }).unwrap();
+      if(response.success || response.data?.success) {
+        setOtp("");
+        startCooldown();
+      }
     } catch (err) {
       setError("Couldn't resend the code. Please try again.");
-    } finally {
-      setIsResending(false);
     }
   }
 
@@ -146,7 +148,7 @@ export default function OtpVerify() {
             <form className="space-y-7" onSubmit={handleVerify}>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="otp-code">Verification code</FieldLabel>
+                  <FieldLabel htmlFor="otp-code" className="text-white">Verification code</FieldLabel>
                   <InputOTP
                     maxLength={OTP_LENGTH}
                     id="otp-code"
@@ -156,7 +158,7 @@ export default function OtpVerify() {
                       if (error) setError(null);
                     }}
                     pattern={REGEXP_ONLY_DIGITS}
-                    disabled={isVerifying}
+                    disabled={isVerifyOtpLoading}
                     containerClassName="justify-between"
                   >
                     <InputOTPGroup>
@@ -197,18 +199,18 @@ export default function OtpVerify() {
                   <Button
                     type="submit"
                     className="w-full border border-white"
-                    disabled={isVerifying || otp.length !== OTP_LENGTH}
+                    disabled={isVerifyOtpLoading || otp.length !== OTP_LENGTH}
                   >
-                    {isVerifying ? "Verifying..." : "Verify code"}
+                    {isVerifyOtpLoading ? "Verifying..." : "Verify code"}
                   </Button>
                   <Button
                     variant="outline"
                     type="button"
                     className="w-full"
                     onClick={handleResend}
-                    disabled={cooldown > 0 || isResending}
+                    disabled={cooldown > 0 || isResendLoading}
                   >
-                    {isResending
+                    {isResendLoading
                       ? "Sending..."
                       : cooldown > 0
                         ? `Resend code in ${cooldown}s`

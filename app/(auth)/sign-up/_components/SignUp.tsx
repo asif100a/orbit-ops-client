@@ -72,7 +72,7 @@ const SignUpForm = () => {
       const res = await registerUser(payload).unwrap();
       if (res.success) {
         setStatusMessage(res?.message || "Registration successful!");
-        router.push("/otp-verify");
+        router.push(`/otp-verify?email=${data.email}&otpType=register`);
       }
     } catch (err: any) {
       const msg =
