@@ -28,19 +28,19 @@ const baseQuery = fetchBaseQuery({
       const changePassToken = sessionStorage.getItem(CHANG_PASS_TOKEN_KEY);
 
       if (verifyToken) {
-        headers.set("Authorization", verifyToken);
+        headers.set("Authorization", `Bearer ${verifyToken}`);
       }
       if (forgotPassToken) {
-        headers.set("Authorization", forgotPassToken);
+        headers.set("Authorization", `Bearer ${forgotPassToken}`);
       }
       if (changePassToken) {
-        headers.set("token", changePassToken);
+        headers.set("token", `Bearer ${changePassToken}`);
       }
     }
 
     const token = (getState() as RootState).auth.token;
     if (token) {
-      headers.set("Authorization", token);
+      headers.set("Authorization", `Bearer ${token}`);
     }
 
     return headers;
@@ -57,7 +57,7 @@ const baseQueryWithRefreshToken: BaseQueryFn<
 
   if (result?.error?.status === 401) {
     const res = (await baseQuery(
-      { url: "/auth/refresh-token", method: "POST", body: {} },
+      { url: "/auth/refresh", method: "POST", body: {} },
       api,
       extraOptions
     )) as { data?: { accessToken?: string } };

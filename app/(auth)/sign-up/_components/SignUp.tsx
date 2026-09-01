@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "@/store/api/authApi";
+import { useRouter } from "next/navigation";
 
 type SignUpFormValues = {
   name: string;
@@ -31,6 +32,7 @@ type SignUpFormValues = {
 const SignUpForm = () => {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const router = useRouter();
 
   const {
     register,
@@ -68,11 +70,18 @@ const SignUpForm = () => {
 
     try {
       const res = await registerUser(payload).unwrap();
-      setStatusMessage(res?.message || "Registration successful!");
+      if (res.success) {
+        setStatusMessage(res?.message || "Registration successful!");
+        router.push("/otp-verify");
+      }
     } catch (err: any) {
       const msg =
-        err?.data?.message || err?.error || "Failed to create account. Please try again.";
-      setErrorMessage(typeof msg === "string" ? msg : "Failed to create account.");
+        err?.data?.message ||
+        err?.error ||
+        "Failed to create account. Please try again.";
+      setErrorMessage(
+        typeof msg === "string" ? msg : "Failed to create account.",
+      );
     }
   };
 
@@ -128,7 +137,9 @@ const SignUpForm = () => {
                   })}
                 />
                 {errors.name ? (
-                  <p className="mt-2 text-sm text-red-300">{errors.name.message}</p>
+                  <p className="mt-2 text-sm text-red-300">
+                    {errors.name.message}
+                  </p>
                 ) : null}
               </Field>
 
@@ -152,7 +163,9 @@ const SignUpForm = () => {
                   })}
                 />
                 {errors.email ? (
-                  <p className="mt-2 text-sm text-red-300">{errors.email.message}</p>
+                  <p className="mt-2 text-sm text-red-300">
+                    {errors.email.message}
+                  </p>
                 ) : null}
               </Field>
 
@@ -164,20 +177,26 @@ const SignUpForm = () => {
                   id="password"
                   type="password"
                   placeholder="***********"
-                  className={cn("text-white", errors.password && "border-red-400")}
+                  className={cn(
+                    "text-white",
+                    errors.password && "border-red-400",
+                  )}
                   aria-invalid={!!errors.password}
                   disabled={isFormLoading}
                   {...register("password", {
                     required: "Password is required",
                     pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      value:
+                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
                       message:
                         "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character (@$!%*?&)",
                     },
                   })}
                 />
                 {errors.password ? (
-                  <p className="mt-2 text-sm text-red-300">{errors.password.message}</p>
+                  <p className="mt-2 text-sm text-red-300">
+                    {errors.password.message}
+                  </p>
                 ) : null}
               </Field>
 
@@ -189,7 +208,10 @@ const SignUpForm = () => {
                   id="confirm-password"
                   type="password"
                   placeholder="***********"
-                  className={cn("text-white", errors.confirmPassword && "border-red-400")}
+                  className={cn(
+                    "text-white",
+                    errors.confirmPassword && "border-red-400",
+                  )}
                   aria-invalid={!!errors.confirmPassword}
                   disabled={isFormLoading}
                   {...register("confirmPassword", {
