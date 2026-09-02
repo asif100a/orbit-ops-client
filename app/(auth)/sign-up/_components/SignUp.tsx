@@ -21,6 +21,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "@/store/api/authApi";
 import { useRouter } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
 
 type SignUpFormValues = {
   name: string;
@@ -32,6 +33,8 @@ type SignUpFormValues = {
 const SignUpForm = () => {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
 
   const {
@@ -173,26 +176,42 @@ const SignUpForm = () => {
                 <FieldLabel htmlFor="password" className="text-white">
                   Password
                 </FieldLabel>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="***********"
-                  className={cn(
-                    "text-white",
-                    errors.password && "border-red-400",
-                  )}
-                  aria-invalid={!!errors.password}
-                  disabled={isFormLoading}
-                  {...register("password", {
-                    required: "Password is required",
-                    pattern: {
-                      value:
-                        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                      message:
-                        "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character (@$!%*?&)",
-                    },
-                  })}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="***********"
+                    className={cn(
+                      "text-white pr-10",
+                      errors.password && "border-red-400",
+                    )}
+                    aria-invalid={!!errors.password}
+                    disabled={isFormLoading}
+                    {...register("password", {
+                      required: "Password is required",
+                      pattern: {
+                        value:
+                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                        message:
+                          "Password must contain at least 8 characters, including uppercase, lowercase, number, and special character (@$!%*?&)",
+                      },
+                    })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    disabled={isFormLoading}
+                    tabIndex={-1}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B89A8] hover:text-white disabled:opacity-50"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
                 {errors.password ? (
                   <p className="mt-2 text-sm text-red-300">
                     {errors.password.message}
@@ -204,22 +223,40 @@ const SignUpForm = () => {
                 <FieldLabel htmlFor="confirm-password" className="text-white">
                   Confirm password
                 </FieldLabel>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  placeholder="***********"
-                  className={cn(
-                    "text-white",
-                    errors.confirmPassword && "border-red-400",
-                  )}
-                  aria-invalid={!!errors.confirmPassword}
-                  disabled={isFormLoading}
-                  {...register("confirmPassword", {
-                    required: "Please confirm your password",
-                    validate: (value) =>
-                      value === passwordValue || "Passwords do not match",
-                  })}
-                />
+                <div className="relative">
+                  <Input
+                    id="confirm-password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="***********"
+                    className={cn(
+                      "text-white pr-10",
+                      errors.confirmPassword && "border-red-400",
+                    )}
+                    aria-invalid={!!errors.confirmPassword}
+                    disabled={isFormLoading}
+                    {...register("confirmPassword", {
+                      required: "Please confirm your password",
+                      validate: (value) =>
+                        value === passwordValue || "Passwords do not match",
+                    })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    disabled={isFormLoading}
+                    tabIndex={-1}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B89A8] hover:text-white disabled:opacity-50"
+                    aria-label={
+                      showConfirmPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
                 {errors.confirmPassword ? (
                   <p className="mt-2 text-sm text-red-300">
                     {errors.confirmPassword.message}

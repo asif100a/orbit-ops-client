@@ -85,7 +85,7 @@ export const authApi = baseApi.injectEndpoints({
     }),
     resendOTP: builder.mutation<any, {email: string; otpType: "register" | "forgot-password"}>({
       query: (data) => ({
-        url: `${BASE_POINT}/reset-password`,
+        url: `${BASE_POINT}/resend-otp`,
         method: 'POST',
         body: data
       }),

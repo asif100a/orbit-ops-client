@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from "react";
 import AuthShell from "@/components/modules/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,15 +37,14 @@ export default function OtpVerify() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const email = searchParams.get('email');
-  const otpType = searchParams.get('otpType');
+  const email = searchParams.get("email");
+  const otpType = searchParams.get("otpType");
 
   const [verifyOTP, { isLoading: isVerifyOtpLoading }] = useVerifyOTPMutation();
-  const [resendOTP, {isLoading: isResendLoading}] = useResendOTPMutation()
+  const [resendOTP, { isLoading: isResendLoading }] = useResendOTPMutation();
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Start the cooldown timer on mount, and clean it up on unmount.
   useEffect(() => {
     startCooldown();
     return () => {
@@ -79,33 +78,35 @@ export default function OtpVerify() {
 
     try {
       const response = await verifyOTP({ otp }).unwrap();
-      if (response.success) {
+      if (response.success || response.data?.success) {
         toast.success("OTP verified successfully");
         router.push("/");
       }
     } catch (err: any) {
       console.error("Error verifying otp: ", err);
-
-      const {message} = getErrorMessage(err);
-
+      const { message } = getErrorMessage(err);
       setError(message ?? "That code didn't work. Please try again.");
     }
   }
 
-  async function handleResend() {
+  async function handleResend(e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+
     if (cooldown > 0 || isResendLoading) return;
-    if(!email) return setError('No email found!');
-    if(!otpType) return setError('No otp type found!')
+    if (!email) return setError("No email found!");
+    if (!otpType) return setError("No otp type found!");
 
     setError(null);
     try {
-      const response  = await resendOTP({
+      const response = await resendOTP({
         email,
-        otpType: otpType as any
+        otpType: otpType as any,
       }).unwrap();
-      if(response.success || response.data?.success) {
+      if (response.success || response.data?.success) {
         setOtp("");
         startCooldown();
+        toast.success("A new OTP has been sent to your email");
       }
     } catch (err) {
       setError("Couldn't resend the code. Please try again.");
@@ -145,10 +146,13 @@ export default function OtpVerify() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="space-y-7" onSubmit={handleVerify}>
+            {/* Only the OTP input + Verify button live inside the form now */}
+            <form className="space-y-7" onSubmit={handleVerify} noValidate>
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="otp-code" className="text-white">Verification code</FieldLabel>
+                  <FieldLabel htmlFor="otp-code" className="text-white">
+                    Verification code
+                  </FieldLabel>
                   <InputOTP
                     maxLength={OTP_LENGTH}
                     id="otp-code"
@@ -203,26 +207,30 @@ export default function OtpVerify() {
                   >
                     {isVerifyOtpLoading ? "Verifying..." : "Verify code"}
                   </Button>
-                  <Button
-                    variant="outline"
-                    type="button"
-                    className="w-full"
-                    onClick={handleResend}
-                    disabled={cooldown > 0 || isResendLoading}
-                  >
-                    {isResendLoading
-                      ? "Sending..."
-                      : cooldown > 0
-                        ? `Resend code in ${cooldown}s`
-                        : "Resend code"}
-                  </Button>
-                  <FieldDescription className="text-center">
-                    Didn&apos;t receive a code?{" "}
-                    <a href="/forgot-password">Try another email</a>
-                  </FieldDescription>
                 </Field>
               </FieldGroup>
             </form>
+
+            {/* Resend lives outside the form entirely — it can never submit it */}
+            <div className="mt-4 space-y-3">
+              <Button
+                variant="outline"
+                type="button"
+                className="w-full"
+                onClick={handleResend}
+                disabled={cooldown > 0 || isResendLoading}
+              >
+                {isResendLoading
+                  ? "Sending..."
+                  : cooldown > 0
+                    ? `Resend code in ${cooldown}s`
+                    : "Resend code"}
+              </Button>
+              <FieldDescription className="text-center">
+                Didn&apos;t receive a code?{" "}
+                <a href="/forgot-password">Try another email</a>
+              </FieldDescription>
+            </div>
           </CardContent>
         </Card>
       </div>
