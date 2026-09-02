@@ -9,7 +9,7 @@ import type { RootState } from "@/store/store";
 import { backendUrl } from "@/constants/env.config";
 import { setUser, logout } from "@/store/features/authSlice";
 import {
-  CHANG_PASS_TOKEN_KEY,
+  RESET_PASS_TOKEN_KEY,
   FORGOT_PASS_TOKEN_KEY,
   VERIFY_TOKEN_KEY,
 } from "@/constants/auth.constants";
@@ -25,7 +25,8 @@ const baseQuery = fetchBaseQuery({
     if (typeof window !== "undefined") {
       const verifyToken = sessionStorage.getItem(VERIFY_TOKEN_KEY);
       const forgotPassToken = sessionStorage.getItem(FORGOT_PASS_TOKEN_KEY);
-      const changePassToken = sessionStorage.getItem(CHANG_PASS_TOKEN_KEY);
+      const resetPassToken = sessionStorage.getItem(RESET_PASS_TOKEN_KEY);
+      console.log("resetPassToken: ", resetPassToken)
 
       if (verifyToken) {
         headers.set("Authorization", `Bearer ${verifyToken}`);
@@ -33,8 +34,8 @@ const baseQuery = fetchBaseQuery({
       if (forgotPassToken) {
         headers.set("Authorization", `Bearer ${forgotPassToken}`);
       }
-      if (changePassToken) {
-        headers.set("token", `Bearer ${changePassToken}`);
+      if (resetPassToken) {
+        headers.set("Authorization", `Bearer ${resetPassToken}`);
       }
     }
 

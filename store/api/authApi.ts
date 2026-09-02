@@ -1,6 +1,6 @@
 import {
-  CHANG_PASS_TOKEN_KEY,
   FORGOT_PASS_TOKEN_KEY,
+  RESET_PASS_TOKEN_KEY,
   VERIFY_TOKEN_KEY,
 } from "@/constants/auth.constants";
 import { tagTypes } from "../tagTypes";
@@ -85,6 +85,7 @@ export const authApi = baseApi.injectEndpoints({
       onQueryStarted: async (arg, api) => {
         const { data } = await api.queryFulfilled;
         sessionStorage.removeItem(FORGOT_PASS_TOKEN_KEY);
+        sessionStorage.setItem(RESET_PASS_TOKEN_KEY, data?.data?.resetPasswordToken);
       },
     }),
     resetPassword: builder.mutation<any, { newPassword: string }>({
@@ -94,6 +95,10 @@ export const authApi = baseApi.injectEndpoints({
         body: data,
       }),
       invalidatesTags: [tagTypes.auth, tagTypes.user],
+      onQueryStarted: async (arg, api) => {
+        const { data } = await api.queryFulfilled;
+        sessionStorage.removeItem(RESET_PASS_TOKEN_KEY);
+      },
     }),
     resendOTP: builder.mutation<
       any,
@@ -130,7 +135,7 @@ export const authApi = baseApi.injectEndpoints({
         const { data } = await api.queryFulfilled;
         sessionStorage.removeItem(VERIFY_TOKEN_KEY);
         sessionStorage.removeItem(FORGOT_PASS_TOKEN_KEY);
-        sessionStorage.removeItem(CHANG_PASS_TOKEN_KEY);
+        sessionStorage.removeItem(RESET_PASS_TOKEN_KEY);
       },
     }),
   }),
