@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type MouseEvent,
+} from "react";
 import AuthShell from "@/components/modules/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,16 +29,21 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useResendOTPMutation, useVerifyOTPMutation } from "@/store/api/authApi";
+import {
+  useResendOTPMutation,
+  useVerifyForgotOTPMutation,
+  useVerifyOTPMutation,
+} from "@/store/api/authApi";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import { OTPType } from "@/types/redux.types";
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_SECONDS = 180;
 
 export default function OtpVerify() {
   const [otp, setOtp] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -41,6 +52,8 @@ export default function OtpVerify() {
   const otpType = searchParams.get("otpType");
 
   const [verifyOTP, { isLoading: isVerifyOtpLoading }] = useVerifyOTPMutation();
+  const [verifyForgotOTP, { isLoading: isVerifyForgotOtpLoading }] =
+    useVerifyForgotOTPMutation();
   const [resendOTP, { isLoading: isResendLoading }] = useResendOTPMutation();
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -69,23 +82,32 @@ export default function OtpVerify() {
 
   async function handleVerify(e: FormEvent) {
     e.preventDefault();
-    setError(null);
+    setErrorMessage(null);
 
     if (otp.length !== OTP_LENGTH) {
-      setError("Please enter the full 6-digit code.");
+      setErrorMessage("Please enter the full 6-digit code.");
       return;
     }
 
     try {
-      const response = await verifyOTP({ otp }).unwrap();
+      const response =
+        otpType === "forgot-password"
+          ? await verifyForgotOTP({ otp }).unwrap()
+          : await verifyOTP({ otp }).unwrap();
+
       if (response.success || response.data?.success) {
         toast.success("OTP verified successfully");
-        router.push("/");
+        if (otpType === "forgot-password") {
+          router.push("/reset-password");
+        } else {
+          router.push("/");
+        }
       }
     } catch (err: any) {
       console.error("Error verifying otp: ", err);
       const { message } = getErrorMessage(err);
-      setError(message ?? "That code didn't work. Please try again.");
+      toast.error(message);
+      setErrorMessage(message ?? "That code didn't work. Please try again.");
     }
   }
 
@@ -94,10 +116,10 @@ export default function OtpVerify() {
     e.stopPropagation();
 
     if (cooldown > 0 || isResendLoading) return;
-    if (!email) return setError("No email found!");
-    if (!otpType) return setError("No otp type found!");
+    if (!email) return setErrorMessage("No email found!");
+    if (!otpType) return setErrorMessage("No otp type found!");
 
-    setError(null);
+    setErrorMessage(null);
     try {
       const response = await resendOTP({
         email,
@@ -108,8 +130,10 @@ export default function OtpVerify() {
         startCooldown();
         toast.success("A new OTP has been sent to your email");
       }
-    } catch (err) {
-      setError("Couldn't resend the code. Please try again.");
+    } catch (err: any) {
+      const { message } = getErrorMessage(err);
+      toast.error(message);
+      setErrorMessage("Couldn't resend the code. Please try again.");
     }
   }
 
@@ -148,6 +172,11 @@ export default function OtpVerify() {
           <CardContent>
             {/* Only the OTP input + Verify button live inside the form now */}
             <form className="space-y-7" onSubmit={handleVerify} noValidate>
+              {errorMessage ? (
+                <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                  {errorMessage}
+                </div>
+              ) : null}
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="otp-code" className="text-white">
@@ -159,7 +188,7 @@ export default function OtpVerify() {
                     value={otp}
                     onChange={(value) => {
                       setOtp(value);
-                      if (error) setError(null);
+                      if (errorMessage) setErrorMessage(null);
                     }}
                     pattern={REGEXP_ONLY_DIGITS}
                     disabled={isVerifyOtpLoading}
@@ -195,17 +224,20 @@ export default function OtpVerify() {
                       />
                     </InputOTPGroup>
                   </InputOTP>
-                  {error && (
-                    <p className="mt-2 text-sm text-red-400">{error}</p>
-                  )}
                 </Field>
                 <Field>
                   <Button
                     type="submit"
                     className="w-full border border-white"
-                    disabled={isVerifyOtpLoading || otp.length !== OTP_LENGTH}
+                    disabled={
+                      isVerifyOtpLoading ||
+                      isVerifyForgotOtpLoading ||
+                      otp.length !== OTP_LENGTH
+                    }
                   >
-                    {isVerifyOtpLoading ? "Verifying..." : "Verify code"}
+                    {isVerifyOtpLoading || isVerifyForgotOtpLoading
+                      ? "Verifying..."
+                      : "Verify code"}
                   </Button>
                 </Field>
               </FieldGroup>

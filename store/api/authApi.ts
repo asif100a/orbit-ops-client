@@ -1,6 +1,11 @@
-import { VERIFY_TOKEN_KEY } from "@/constants/auth.constants";
+import {
+  CHANG_PASS_TOKEN_KEY,
+  FORGOT_PASS_TOKEN_KEY,
+  VERIFY_TOKEN_KEY,
+} from "@/constants/auth.constants";
 import { tagTypes } from "../tagTypes";
 import { baseApi } from "./_base/baseApi";
+import { OTPType } from "@/types/redux.types";
 
 const BASE_POINT = "/auth";
 
@@ -35,19 +40,18 @@ export const authApi = baseApi.injectEndpoints({
         sessionStorage.setItem(VERIFY_TOKEN_KEY, data?.data?.verifyToken);
       },
     }),
-    login: builder.mutation<RegisterResponse, {email: string; password: string}>({
+    login: builder.mutation<
+      RegisterResponse,
+      { email: string; password: string }
+    >({
       query: (data) => ({
         url: `${BASE_POINT}/login`,
         method: "POST",
         body: data,
       }),
       invalidatesTags: [tagTypes.auth, tagTypes.user],
-      onQueryStarted: async (arg, api) => {
-        const { data } = await api.queryFulfilled;
-        sessionStorage.setItem(VERIFY_TOKEN_KEY, data?.data?.verifyToken);
-      },
     }),
-    verifyOTP: builder.mutation<any, {otp: string}>({
+    verifyOTP: builder.mutation<any, { otp: string }>({
       query: (data) => ({
         url: `${BASE_POINT}/verify-otp`,
         method: "POST",
@@ -56,47 +60,78 @@ export const authApi = baseApi.injectEndpoints({
       invalidatesTags: [tagTypes.auth, tagTypes.user],
       onQueryStarted: async (arg, api) => {
         const { data } = await api.queryFulfilled;
-        sessionStorage.setItem(VERIFY_TOKEN_KEY, data?.data?.verifyToken);
+        sessionStorage.removeItem(VERIFY_TOKEN_KEY);
       },
     }),
-    forgotPassword: builder.mutation<any, {email: string}>({
+    forgotPassword: builder.mutation<any, { email: string }>({
       query: (data) => ({
         url: `${BASE_POINT}/forgot-password`,
-        method: 'POST',
-        body: data
+        method: "POST",
+        body: data,
       }),
-      invalidatesTags: [tagTypes.auth, tagTypes.user]
+      invalidatesTags: [tagTypes.auth, tagTypes.user],
+      onQueryStarted: async (arg, api) => {
+        const { data } = await api.queryFulfilled;
+        sessionStorage.setItem(FORGOT_PASS_TOKEN_KEY, data?.data?.verifyToken);
+      },
     }),
-    verifyForgotOTP: builder.mutation<any, {otp: string}>({
+    verifyForgotOTP: builder.mutation<any, { otp: string }>({
       query: (data) => ({
         url: `${BASE_POINT}/verify-forgot-password-otp`,
-        method: 'POST',
-        body: data
+        method: "POST",
+        body: data,
       }),
-      invalidatesTags: [tagTypes.auth, tagTypes.user]
+      invalidatesTags: [tagTypes.auth, tagTypes.user],
+      onQueryStarted: async (arg, api) => {
+        const { data } = await api.queryFulfilled;
+        sessionStorage.removeItem(FORGOT_PASS_TOKEN_KEY);
+      },
     }),
-    resetPassword: builder.mutation<any, {newPassword: string}>({
+    resetPassword: builder.mutation<any, { newPassword: string }>({
       query: (data) => ({
         url: `${BASE_POINT}/reset-password`,
-        method: 'POST',
-        body: data
+        method: "POST",
+        body: data,
       }),
-      invalidatesTags: [tagTypes.auth, tagTypes.user]
+      invalidatesTags: [tagTypes.auth, tagTypes.user],
     }),
-    resendOTP: builder.mutation<any, {email: string; otpType: "register" | "forgot-password"}>({
+    resendOTP: builder.mutation<
+      any,
+      { email: string; otpType: OTPType }
+    >({
       query: (data) => ({
         url: `${BASE_POINT}/resend-otp`,
-        method: 'POST',
-        body: data
+        method: "POST",
+        body: data,
       }),
-      invalidatesTags: [tagTypes.auth, tagTypes.user]
+      invalidatesTags: [tagTypes.auth, tagTypes.user],
+      onQueryStarted: async (arg, api) => {
+        const { data } = await api.queryFulfilled;
+        if (arg.otpType === "forgot-password") {
+          sessionStorage.setItem(
+            FORGOT_PASS_TOKEN_KEY,
+            data?.data?.verifyToken,
+          );
+        }else{
+          sessionStorage.setItem(
+            VERIFY_TOKEN_KEY,
+            data?.data?.verifyToken,
+          );
+        }
+      },
     }),
     logout: builder.mutation({
       query: () => ({
         url: `${BASE_POINT}/logout`,
-        method: 'POST'
+        method: "POST",
       }),
-      invalidatesTags: [tagTypes.auth, tagTypes.user]
+      invalidatesTags: [tagTypes.auth, tagTypes.user],
+      onQueryStarted: async (arg, api) => {
+        const { data } = await api.queryFulfilled;
+        sessionStorage.removeItem(VERIFY_TOKEN_KEY);
+        sessionStorage.removeItem(FORGOT_PASS_TOKEN_KEY);
+        sessionStorage.removeItem(CHANG_PASS_TOKEN_KEY);
+      },
     }),
   }),
   overrideExisting: true,

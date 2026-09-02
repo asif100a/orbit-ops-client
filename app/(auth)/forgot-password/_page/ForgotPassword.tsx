@@ -1,3 +1,6 @@
+"use client";
+
+import { cn } from "@/lib/utils";
 import AuthShell from "@/components/modules/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,8 +17,60 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+import { useForgotPasswordMutation } from "@/store/api/authApi";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useState } from "react";
+
+type ForgotPasswordFormValues = {
+  email: string;
+};
 
 export default function ForgotPassword() {
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<ForgotPasswordFormValues>({
+    mode: "onBlur",
+    defaultValues: {
+      email: "",
+    },
+  });
+
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+
+  const isFormLoading = isLoading || isSubmitting;
+
+  const onSubmit = async (data: ForgotPasswordFormValues) => {
+    setErrorMessage(null);
+
+    try {
+      const res = await forgotPassword({ email: data.email }).unwrap();
+      if (res.success) {
+        toast.success(res?.message || "Recovery code sent to your email");
+        router.push(
+          `/otp-verify?email=${encodeURIComponent(data.email)}&otpType=forgot-password`,
+        );
+      }
+    } catch (err: any) {
+      const msg =
+        err?.data?.message ||
+        err?.error ||
+        "Failed to send recovery email. Please try again.";
+      setErrorMessage(typeof msg === "string" ? msg : "Failed to send recovery email.");
+    }
+  };
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void handleSubmit(onSubmit)(event);
+  };
+
   return (
     <AuthShell
       title="Reset your password"
@@ -47,21 +102,46 @@ export default function ForgotPassword() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form className="space-y-6">
+            <form className="space-y-6" onSubmit={handleFormSubmit} noValidate>
+              {errorMessage ? (
+                <div className="rounded-xl border border-red-400/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                  {errorMessage}
+                </div>
+              ) : null}
+
               <FieldGroup>
                 <Field>
-                  <FieldLabel htmlFor="email">Email</FieldLabel>
+                  <FieldLabel htmlFor="email" className="text-white">
+                    Email
+                  </FieldLabel>
                   <Input
                     id="email"
                     type="email"
                     placeholder="jane@example.com"
-                    required
-                    className="text-white"
+                    className={cn("text-white", errors.email && "border-red-400")}
+                    aria-invalid={!!errors.email}
+                    disabled={isFormLoading}
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Enter a valid email address",
+                      },
+                    })}
                   />
+                  {errors.email ? (
+                    <p className="mt-2 text-sm text-red-300">
+                      {errors.email.message}
+                    </p>
+                  ) : null}
                 </Field>
                 <Field>
-                  <Button type="submit" className="w-full border border-white">
-                    Send recovery link
+                  <Button
+                    type="submit"
+                    className="w-full border border-white"
+                    disabled={isFormLoading}
+                  >
+                    {isFormLoading ? "Sending..." : "Send the email"}
                   </Button>
                   <FieldDescription className="text-center">
                     Remembered your password? <a href="/sign-in">Sign in</a>

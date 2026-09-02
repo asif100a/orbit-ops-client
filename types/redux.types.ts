@@ -20,3 +20,5 @@ export interface RefreshTokenResponse {
   accessToken?: string;
   refreshToken?: string;
 }
+
+export type OTPType = "register" | "forgot-password"
