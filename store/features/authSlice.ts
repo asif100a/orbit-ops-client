@@ -5,8 +5,9 @@ import type { RootState } from "../store";
 import type { AuthState } from "@/types/redux.types";
 
 const initialState: AuthState = {
+  isAuthenticated: false,
   user: null,
-  token: null
+  token: null,
 };
 
 const authSlice = createSlice({
@@ -18,6 +19,7 @@ const authSlice = createSlice({
 
       state.user = user;
       state.token = token;
+      state.isAuthenticated = true;
 
       // Set token to cookie for middleware accessibility
       Cookies.set(ACCESS_TOKEN_KEY, token, { path: "/" });
@@ -29,6 +31,7 @@ const authSlice = createSlice({
 
       state.user = null;
       state.token = null;
+      state.isAuthenticated = false;
     }
   }
 });

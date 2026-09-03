@@ -12,6 +12,7 @@ export interface UserPayload {
 }
 
 export interface AuthState {
+  isAuthenticated: boolean;
   user: UserPayload | null;
   token: string | null;
 }

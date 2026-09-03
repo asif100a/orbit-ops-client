@@ -26,6 +26,11 @@ export interface RegisterResponse {
   data?: any;
 }
 
+export interface CheckAuthResponse {
+  success: boolean;
+  message: string;
+}
+
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     register: builder.mutation<RegisterResponse, RegisterPayload>({
@@ -125,6 +130,13 @@ export const authApi = baseApi.injectEndpoints({
         }
       },
     }),
+    checkAuth: builder.query<CheckAuthResponse, void>({
+      query: () => ({
+        url: `${BASE_POINT}/check-auth`,
+        method: 'GET'
+      }),
+      providesTags: [tagTypes.auth, tagTypes.user]
+    }),
     logout: builder.mutation({
       query: () => ({
         url: `${BASE_POINT}/logout`,
@@ -150,5 +162,6 @@ export const {
   useVerifyForgotOTPMutation,
   useResetPasswordMutation,
   useResendOTPMutation,
+  useCheckAuthQuery,
   useLogoutMutation,
 } = authApi;
