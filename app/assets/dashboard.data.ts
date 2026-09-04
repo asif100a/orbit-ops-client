@@ -61,7 +61,7 @@ export const USER_NAVIGATION = [
     //   },
       {
         label: "Time Tracking",
-        href: "/time-tracking",
+        href: "/user/time-tracking",
         icon: Clock3,
       },
     ],
@@ -71,7 +71,7 @@ export const USER_NAVIGATION = [
     items: [
       {
         label: "Team",
-        href: "/team",
+        href: "/user/team",
         icon: Users,
       },
     //   {
