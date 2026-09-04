@@ -34,11 +34,11 @@ export const USER_NAVIGATION = [
         icon: Inbox,
         badge: 4,
       },
-      // {
-      //   label: "Messages",
-      //   href: "/messages",
-      //   icon: MessageSquare,
-      // },
+      {
+        label: "Messages",
+        href: "/user/message",
+        icon: MessageSquare,
+      },
     ],
   },
   {
