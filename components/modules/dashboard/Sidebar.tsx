@@ -3,106 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3,
-  Bell,
-  BriefcaseBusiness,
-  CalendarDays,
-  CheckSquare,
   ChevronDown,
-  Clock3,
-  FileText,
-  FolderKanban,
-  Inbox,
-  LayoutDashboard,
-  MessageSquare,
   Settings,
-  Users,
-  Wallet,
 } from "lucide-react";
-
-const navigation = [
-  {
-    label: "Workspace",
-    items: [
-      {
-        label: "Dashboard",
-        href: "/dashboard",
-        icon: LayoutDashboard,
-      },
-      {
-        label: "Inbox",
-        href: "/inbox",
-        icon: Inbox,
-        badge: 4,
-      },
-      {
-        label: "Messages",
-        href: "/messages",
-        icon: MessageSquare,
-      },
-    ],
-  },
-  {
-    label: "Work",
-    items: [
-      {
-        label: "Projects",
-        href: "/projects",
-        icon: FolderKanban,
-      },
-      {
-        label: "My Tasks",
-        href: "/tasks",
-        icon: CheckSquare,
-      },
-      {
-        label: "Calendar",
-        href: "/calendar",
-        icon: CalendarDays,
-      },
-      {
-        label: "Time Tracking",
-        href: "/time",
-        icon: Clock3,
-      },
-    ],
-  },
-  {
-    label: "Organization",
-    items: [
-      {
-        label: "Team",
-        href: "/team",
-        icon: Users,
-      },
-      {
-        label: "Clients",
-        href: "/clients",
-        icon: BriefcaseBusiness,
-      },
-      {
-        label: "Files",
-        href: "/files",
-        icon: FileText,
-      },
-    ],
-  },
-  {
-    label: "Business",
-    items: [
-      {
-        label: "Finance",
-        href: "/finance",
-        icon: Wallet,
-      },
-      {
-        label: "Reports",
-        href: "/reports",
-        icon: BarChart3,
-      },
-    ],
-  },
-];
+import { USER_NAVIGATION } from "@/app/assets/dashboard.data";
+import Logo from "../Logo";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -111,48 +16,15 @@ export function Sidebar() {
     <aside className="fixed inset-y-0 left-0 z-50 hidden w-[260px] border-r border-white/[0.06] bg-[#0A0A14] lg:flex lg:flex-col">
       {/* Logo */}
       <div className="flex h-[72px] items-center border-b border-white/[0.06] px-5">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 font-bold text-white shadow-[0_0_24px_rgba(108,99,255,0.35)]">
-            O
-          </div>
-
-          <div>
-            <div className="text-[17px] font-bold tracking-tight">
-              OrbitOps
-            </div>
-
-            <div className="text-[10px] text-[#8B89A8]">
-              COMMAND CENTER
-            </div>
-          </div>
+        <Link href="/user" className="flex items-center gap-3">
+          <Logo />
         </Link>
-      </div>
-
-      {/* Workspace selector */}
-      <div className="px-3 pt-4">
-        <button className="flex w-full items-center gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] px-3 py-2.5 text-left transition hover:border-white/[0.12] hover:bg-white/[0.04]">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-500 to-teal-400 text-xs font-bold">
-            SO
-          </div>
-
-          <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">
-              Standard One
-            </p>
-
-            <p className="truncate text-[11px] text-[#8B89A8]">
-              Agency Workspace
-            </p>
-          </div>
-
-          <ChevronDown className="h-4 w-4 text-[#8B89A8]" />
-        </button>
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-6">
         <div className="space-y-7">
-          {navigation.map((section) => (
+          {USER_NAVIGATION.map((section) => (
             <div key={section.label}>
               <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5F5D78]">
                 {section.label}

@@ -3,8 +3,9 @@ import {
   BriefcaseBusiness,
   CalendarDays,
   CheckSquare,
-  Clock,
+  Clock3,
   CreditCard,
+  FileText,
   FolderKanban,
   Inbox,
   LayoutDashboard,
@@ -18,42 +19,88 @@ import {
   Wallet,
 } from "lucide-react";
 
-export const NAVIGATION = [
+export const USER_NAVIGATION = [
   {
     label: "Workspace",
     items: [
-      { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-      { label: "Inbox", href: "/inbox", icon: Inbox },
-      { label: "Messages", href: "/messages", icon: MessageSquare },
+      {
+        label: "Dashboard",
+        href: "/user",
+        icon: LayoutDashboard,
+      },
+      {
+        label: "Inbox",
+        href: "/inbox",
+        icon: Inbox,
+        badge: 4,
+      },
+      {
+        label: "Messages",
+        href: "/messages",
+        icon: MessageSquare,
+      },
     ],
   },
-
   {
     label: "Work",
     items: [
-      { label: "Projects", href: "/projects", icon: FolderKanban },
-      { label: "My Tasks", href: "/tasks", icon: CheckSquare },
-      { label: "Calendar", href: "/calendar", icon: CalendarDays },
-      { label: "Time Tracking", href: "/time", icon: Clock },
+      {
+        label: "Projects",
+        href: "/projects",
+        icon: FolderKanban,
+      },
+      {
+        label: "My Tasks",
+        href: "/my-tasks",
+        icon: CheckSquare,
+      },
+    //   {
+    //     label: "Calendar",
+    //     href: "/calendar",
+    //     icon: CalendarDays,
+    //   },
+      {
+        label: "Time Tracking",
+        href: "/time-tracking",
+        icon: Clock3,
+      },
     ],
   },
-
   {
     label: "Organization",
     items: [
-      { label: "Team", href: "/team", icon: Users },
-      { label: "Clients", href: "/clients", icon: BriefcaseBusiness },
-      { label: "Files", href: "/files", icon: File },
+      {
+        label: "Team",
+        href: "/team",
+        icon: Users,
+      },
+    //   {
+    //     label: "Clients",
+    //     href: "/clients",
+    //     icon: BriefcaseBusiness,
+    //   },
+    //   {
+    //     label: "Files",
+    //     href: "/files",
+    //     icon: FileText,
+    //   },
     ],
   },
-
-  {
-    label: "Business",
-    items: [
-      { label: "Finance", href: "/finance", icon: Wallet },
-      { label: "Reports", href: "/reports", icon: BarChart3 },
-    ],
-  },
+//   {
+//     label: "Business",
+//     items: [
+//       {
+//         label: "Finance",
+//         href: "/finance",
+//         icon: Wallet,
+//       },
+//       {
+//         label: "Reports",
+//         href: "/reports",
+//         icon: BarChart3,
+//       },
+//     ],
+//   },
 ];
 
 export const ADMIN_NAVIGATION = [
