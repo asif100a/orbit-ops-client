@@ -55,24 +55,16 @@ const baseQueryWithRefreshToken: BaseQueryFn<
   ExtraOptions
 > = async (args, api, extraOptions) => {
   let result: BaseQueryResult = await baseQuery(args, api, extraOptions);
+  // console.log('Base query result: ', result.error);
 
   if (result?.error?.status === 401) {
     const res = (await baseQuery(
       { url: "/auth/refresh", method: "POST", body: {} },
       api,
       extraOptions
-    )) as { data?: { accessToken?: string } };
+    )) as any;
 
-    if (res?.data?.accessToken) {
-      const user = (api.getState() as RootState).auth.user;
-
-      api.dispatch(
-        setUser({
-          user,
-          token: res.data.accessToken,
-        })
-      );
-
+    if (res?.success || res?.data?.success) {
       result = await baseQuery(args, api, extraOptions);
     } else {
       api.dispatch(logout());

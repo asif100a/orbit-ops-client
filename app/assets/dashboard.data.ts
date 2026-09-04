@@ -30,15 +30,15 @@ export const USER_NAVIGATION = [
       },
       {
         label: "Inbox",
-        href: "/inbox",
+        href: "/user/inbox",
         icon: Inbox,
         badge: 4,
       },
-      {
-        label: "Messages",
-        href: "/messages",
-        icon: MessageSquare,
-      },
+      // {
+      //   label: "Messages",
+      //   href: "/messages",
+      //   icon: MessageSquare,
+      // },
     ],
   },
   {
@@ -46,7 +46,7 @@ export const USER_NAVIGATION = [
     items: [
       {
         label: "Projects",
-        href: "/projects",
+        href: "/user/projects",
         icon: FolderKanban,
       },
       {
