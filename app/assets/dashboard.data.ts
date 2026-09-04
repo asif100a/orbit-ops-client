@@ -70,8 +70,8 @@ export const USER_NAVIGATION = [
     label: "Organization",
     items: [
       {
-        label: "Team",
-        href: "/user/team",
+        label: "Teams",
+        href: "/user/teams",
         icon: Users,
       },
     //   {
