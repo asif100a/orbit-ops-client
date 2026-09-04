@@ -51,7 +51,7 @@ export const USER_NAVIGATION = [
       },
       {
         label: "My Tasks",
-        href: "/my-tasks",
+        href: "/user/my-tasks",
         icon: CheckSquare,
       },
     //   {
