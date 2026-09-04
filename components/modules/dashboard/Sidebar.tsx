@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  ChevronDown,
   Settings,
 } from "lucide-react";
 import { USER_NAVIGATION } from "@/app/assets/dashboard.data";
@@ -36,7 +35,8 @@ export function Sidebar() {
 
                   const isActive =
                     pathname === item.href ||
-                    pathname.startsWith(`${item.href}/`);
+                    (item.href !== "/user" &&
+                      pathname.startsWith(`${item.href}/`));
 
                   return (
                     <Link

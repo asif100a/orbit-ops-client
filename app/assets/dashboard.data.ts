@@ -28,12 +28,12 @@ export const USER_NAVIGATION = [
         href: "/user",
         icon: LayoutDashboard,
       },
-      {
-        label: "Inbox",
-        href: "/user/inbox",
-        icon: Inbox,
-        badge: 4,
-      },
+      // {
+      //   label: "Inbox",
+      //   href: "/user/inbox",
+      //   icon: Inbox,
+      //   badge: 4,
+      // },
       {
         label: "Messages",
         href: "/user/message",
