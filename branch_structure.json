@@ -1,0 +1,24 @@
+{
+  "default_branch": "main",
+  "branches": [
+    "api-auth",
+    "design-website",
+    "design/auth",
+    "main",
+    "user-dashboard"
+  ],
+  "parent": {
+    "api-auth": "main",
+    "design-website": "main",
+    "design/auth": "main",
+    "main": null,
+    "user-dashboard": "main"
+  },
+  "order": [
+    "main",
+    "api-auth",
+    "design-website",
+    "design/auth",
+    "user-dashboard"
+  ]
+}
