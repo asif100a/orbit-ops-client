@@ -32,6 +32,12 @@ export function Sidebar() {
               <div className="space-y-1">
                 {section.items.map((item) => {
                   const Icon = item.icon;
+                  const badge =
+                    "badge" in item &&
+                    (typeof item.badge === "string" ||
+                      typeof item.badge === "number")
+                      ? item.badge
+                      : null;
 
                   const isActive =
                     pathname === item.href ||
@@ -67,9 +73,9 @@ export function Sidebar() {
                         {item.label}
                       </span>
 
-                      {"badge" in item && item.badge ? (
+                      {badge !== null ? (
                         <span className="rounded-full bg-violet-500/15 px-2 py-0.5 text-[10px] font-medium text-violet-300">
-                          {item.badge}
+                          {badge}
                         </span>
                       ) : null}
                     </Link>

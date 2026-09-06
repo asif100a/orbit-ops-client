@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import AuthShell from "@/components/modules/auth/AuthShell";
-import SignUpForm from "./_components/SignUp";
+import SignUpForm from "./_page/SignUp";
 
 export const metadata: Metadata = {
   title: "Sign Up",
