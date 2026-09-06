@@ -84,7 +84,7 @@ export function Sidebar() {
       {/* Bottom section */}
       <div className="border-t border-white/[0.06] p-3">
         <Link
-          href="/settings"
+          href="/user/settings"
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#8B89A8] transition hover:bg-white/[0.035] hover:text-white"
         >
           <Settings className="h-[17px] w-[17px]" />
