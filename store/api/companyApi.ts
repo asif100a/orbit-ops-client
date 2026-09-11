@@ -1,7 +1,6 @@
 import { tagTypes } from "../tagTypes";
 import { baseApi } from "./_base/baseApi";
 
-const BASE_POINT = "/companies";
 
 export type CompanyStatus = "pending_subscription" | "active" | "suspended";
 
@@ -25,9 +24,30 @@ export interface CompanyResponse {
 
 export interface CreateCompanyPayload {
   name: string;
-  website?: string;
+  slug: string;
+  registrationNumber: string;
+  industryType: string;
   size: string;
-  country: string;
+  logo: string;
+  website: string;
+  email: string;
+  phoneNumber: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+  };
+  timezone: string;
+  plan: string;
+  settings: {
+    workingDays: string[];
+    workingHoursStart: string;
+    workingHoursEnd: string;
+    defaultCurrency: string;
+    allowSelfRegistration: boolean;
+  };
 }
 
 export interface CreateCheckoutPayload {
@@ -43,11 +63,13 @@ export interface CheckoutResponse {
   };
 }
 
+const BASE_POINT = "/company";
+
 export const companyApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getMyCompany: builder.query<CompanyResponse, void>({
       query: () => ({
-        url: `${BASE_POINT}/me`,
+        url: `${BASE_POINT}/my-company`,
         method: "GET",
       }),
       providesTags: [tagTypes.company, tagTypes.subscription],
@@ -65,7 +87,7 @@ export const companyApi = baseApi.injectEndpoints({
       CreateCheckoutPayload
     >({
       query: (data) => ({
-        url: "/subscriptions/checkout",
+        url: `${BASE_POINT}/checkout`,
         method: "POST",
         body: data,
       }),

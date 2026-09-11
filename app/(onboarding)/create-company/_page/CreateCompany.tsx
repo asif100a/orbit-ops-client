@@ -15,9 +15,14 @@ import {
   ArrowRight,
   Building2,
   Check,
+  Clock3,
   Globe2,
+  Hash,
   Loader2,
+  Mail,
   MapPin,
+  Phone,
+  Settings2,
   Users,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -27,10 +32,38 @@ import toast from "react-hot-toast";
 
 type CompanyFormValues = {
   name: string;
+  registrationNumber: string;
+  industryType: string;
+  logo: string;
   website: string;
+  email: string;
+  phoneNumber: string;
   size: string;
-  country: string;
+  address: {
+    street: string;
+    city: string;
+    state: string;
+    country: string;
+    postalCode: string;
+  };
+  timezone: string;
+  plan: string;
+  settings: {
+    workingDays: string[];
+    workingHoursStart: string;
+    workingHoursEnd: string;
+    defaultCurrency: string;
+    allowSelfRegistration: boolean;
+  };
 };
+
+const workingDays = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+];
 
 const workspaceFeatures = [
   "Company owner access",
@@ -52,9 +85,29 @@ export default function CreateCompanyPage() {
     mode: "onBlur",
     defaultValues: {
       name: "",
+      registrationNumber: "",
+      industryType: "",
+      logo: "",
       website: "",
-      size: "2-10",
-      country: "",
+      email: "",
+      phoneNumber: "",
+      size: "1-10",
+      address: {
+        street: "",
+        city: "",
+        state: "",
+        country: "",
+        postalCode: "",
+      },
+      timezone: "America/Los_Angeles",
+      plan: "FREE",
+      settings: {
+        workingDays,
+        workingHoursStart: "09:00",
+        workingHoursEnd: "18:00",
+        defaultCurrency: "USD",
+        allowSelfRegistration: false,
+      },
     },
   });
 
@@ -78,9 +131,18 @@ export default function CreateCompanyPage() {
     try {
       await createCompany({
         name: data.name,
-        website: data.website,
+        slug: workspaceSlug,
+        registrationNumber: data.registrationNumber,
+        industryType: data.industryType,
         size: data.size,
-        country: data.country,
+        logo: data.logo,
+        website: data.website,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        address: data.address,
+        timezone: data.timezone,
+        plan: data.plan,
+        settings: data.settings,
       }).unwrap();
       toast.success(`${data.name} workspace created`);
       router.push("/billing/subscribe");
@@ -149,6 +211,46 @@ export default function CreateCompanyPage() {
               </Field>
 
               <Field>
+                <FieldLabel htmlFor="company-registration" className="text-white">
+                  Registration number
+                </FieldLabel>
+                <div className="relative">
+                  <Hash className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#686681]" />
+                  <Input
+                    id="company-registration"
+                    placeholder="RC-1234567"
+                    className={cn(
+                      "h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]",
+                      errors.registrationNumber && "border-red-400",
+                    )}
+                    disabled={isFormLoading}
+                    aria-invalid={!!errors.registrationNumber}
+                    {...register("registrationNumber", {
+                      required: "Registration number is required",
+                    })}
+                  />
+                </div>
+                {errors.registrationNumber ? (
+                  <p className="text-sm text-red-300">{errors.registrationNumber.message}</p>
+                ) : null}
+              </Field>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field>
+                <FieldLabel htmlFor="company-industry" className="text-white">
+                  Industry type
+                </FieldLabel>
+                <Input
+                  id="company-industry"
+                  placeholder="IT Services"
+                  className="h-11 border-white/[0.08] bg-white/[0.035] text-white placeholder:text-[#55536B]"
+                  disabled={isFormLoading}
+                  {...register("industryType", { required: "Industry type is required" })}
+                />
+              </Field>
+
+              <Field>
                 <FieldLabel htmlFor="company-website" className="text-white">
                   Website
                 </FieldLabel>
@@ -156,27 +258,12 @@ export default function CreateCompanyPage() {
                   <Globe2 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#686681]" />
                   <Input
                     id="company-website"
-                    placeholder="https://example.com"
-                    className={cn(
-                      "h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]",
-                      errors.website && "border-red-400",
-                    )}
+                    placeholder="https://www.acme.com"
+                    className="h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]"
                     disabled={isFormLoading}
-                    aria-invalid={!!errors.website}
-                    {...register("website", {
-                      pattern: {
-                        value:
-                          /^(https?:\/\/)?([\w-]+\.)+[\w-]{2,}(\/.*)?$/i,
-                        message: "Enter a valid website URL",
-                      },
-                    })}
+                    {...register("website")}
                   />
                 </div>
-                {errors.website ? (
-                  <p className="text-sm text-red-300">
-                    {errors.website.message}
-                  </p>
-                ) : null}
               </Field>
             </div>
 
@@ -198,8 +285,8 @@ export default function CreateCompanyPage() {
                     <option className="bg-[#12121e]" value="1">
                       Just me
                     </option>
-                    <option className="bg-[#12121e]" value="2-10">
-                      2-10 people
+                    <option className="bg-[#12121e]" value="1-10">
+                      1-10 people
                     </option>
                     <option className="bg-[#12121e]" value="11-50">
                       11-50 people
@@ -218,31 +305,109 @@ export default function CreateCompanyPage() {
               </Field>
 
               <Field>
-                <FieldLabel htmlFor="company-country" className="text-white">
-                  Country
+                <FieldLabel htmlFor="company-logo" className="text-white">
+                  Logo URL
                 </FieldLabel>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#686681]" />
-                  <Input
-                    id="company-country"
-                    placeholder="United States"
-                    className={cn(
-                      "h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]",
-                      errors.country && "border-red-400",
-                    )}
-                    disabled={isFormLoading}
-                    aria-invalid={!!errors.country}
-                    {...register("country", {
-                      required: "Country is required",
-                    })}
-                  />
-                </div>
-                {errors.country ? (
-                  <p className="text-sm text-red-300">
-                    {errors.country.message}
-                  </p>
-                ) : null}
+                <Input
+                  id="company-logo"
+                  placeholder="https://cdn.example.com/logos/acme.png"
+                  className="h-11 border-white/[0.08] bg-white/[0.035] text-white placeholder:text-[#55536B]"
+                  disabled={isFormLoading}
+                  {...register("logo")}
+                />
               </Field>
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              <Field>
+                <FieldLabel htmlFor="company-email" className="text-white">Company email</FieldLabel>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#686681]" />
+                  <Input id="company-email" type="email" placeholder="hello@acme.com" className="h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("email", { required: "Company email is required" })} />
+                </div>
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="company-phone" className="text-white">Phone number</FieldLabel>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#686681]" />
+                  <Input id="company-phone" type="tel" placeholder="+1-555-123-4567" className="h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("phoneNumber", { required: "Phone number is required" })} />
+                </div>
+              </Field>
+            </div>
+
+            <div className="border-t border-white/[0.06] pt-5">
+              <p className="mb-4 text-sm font-semibold text-white">Company address</p>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field>
+                  <FieldLabel htmlFor="company-street" className="text-white">Street</FieldLabel>
+                  <Input id="company-street" placeholder="123 Innovation Drive" className="h-11 border-white/[0.08] bg-white/[0.035] text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("address.street", { required: "Street is required" })} />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="company-city" className="text-white">City</FieldLabel>
+                  <Input id="company-city" placeholder="San Francisco" className="h-11 border-white/[0.08] bg-white/[0.035] text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("address.city", { required: "City is required" })} />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="company-state" className="text-white">State</FieldLabel>
+                  <Input id="company-state" placeholder="California" className="h-11 border-white/[0.08] bg-white/[0.035] text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("address.state", { required: "State is required" })} />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="company-country" className="text-white">Country</FieldLabel>
+                  <div className="relative">
+                    <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#686681]" />
+                    <Input id="company-country" placeholder="United States" className="h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("address.country", { required: "Country is required" })} />
+                  </div>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="company-postal-code" className="text-white">Postal code</FieldLabel>
+                  <Input id="company-postal-code" placeholder="94105" className="h-11 border-white/[0.08] bg-white/[0.035] text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("address.postalCode", { required: "Postal code is required" })} />
+                </Field>
+              </div>
+            </div>
+
+            <div className="border-t border-white/[0.06] pt-5">
+              <div className="mb-4 flex items-center gap-2">
+                <Settings2 className="h-4 w-4 text-violet-300" />
+                <p className="text-sm font-semibold text-white">Workspace settings</p>
+              </div>
+              <div className="grid gap-5 sm:grid-cols-2">
+                <Field>
+                  <FieldLabel htmlFor="company-timezone" className="text-white">Timezone</FieldLabel>
+                  <div className="relative">
+                    <Clock3 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#686681]" />
+                    <Input id="company-timezone" placeholder="America/Los_Angeles" className="h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("timezone", { required: "Timezone is required" })} />
+                  </div>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="company-plan" className="text-white">Plan</FieldLabel>
+                  <select id="company-plan" className="h-11 w-full rounded-lg border border-white/[0.08] bg-white/[0.035] px-3 text-sm text-white outline-none transition focus:border-violet-500/50" disabled={isFormLoading} {...register("plan", { required: "Plan is required" })}>
+                    <option className="bg-[#12121e]" value="FREE">Free</option>
+                  </select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="working-hours-start" className="text-white">Working hours start</FieldLabel>
+                  <Input id="working-hours-start" type="time" className="h-11 border-white/[0.08] bg-white/[0.035] text-white" disabled={isFormLoading} {...register("settings.workingHoursStart", { required: "Start time is required" })} />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="working-hours-end" className="text-white">Working hours end</FieldLabel>
+                  <Input id="working-hours-end" type="time" className="h-11 border-white/[0.08] bg-white/[0.035] text-white" disabled={isFormLoading} {...register("settings.workingHoursEnd", { required: "End time is required" })} />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="default-currency" className="text-white">Default currency</FieldLabel>
+                  <Input id="default-currency" placeholder="USD" className="h-11 border-white/[0.08] bg-white/[0.035] text-white placeholder:text-[#55536B]" disabled={isFormLoading} {...register("settings.defaultCurrency", { required: "Currency is required" })} />
+                </Field>
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {workingDays.map((day) => (
+                  <label key={day} className="flex cursor-pointer items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.025] px-3 py-2 text-xs text-[#D9D7EA]">
+                    <input type="checkbox" value={day} defaultChecked {...register("settings.workingDays")} />
+                    {day.slice(0, 3)}
+                  </label>
+                ))}
+              </div>
+              <label className="mt-4 flex items-center gap-2 text-sm text-[#D9D7EA]">
+                <input type="checkbox" {...register("settings.allowSelfRegistration")} />
+                Allow self-registration
+              </label>
             </div>
           </FieldGroup>
 
