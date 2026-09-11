@@ -290,7 +290,13 @@ export default function CreateCompanyPage() {
                       placeholder="https://www.acme.com"
                       className="h-11 border-white/[0.08] bg-white/[0.035] pl-10 text-white placeholder:text-[#55536B]"
                       disabled={isFormLoading}
-                      {...register("website")}
+                      {...register("website", {
+                        pattern: {
+                          value: /^https?:\/\/[\w.-]+\.[a-z]{2,}(\/\S*)?$/i,
+                          message:
+                            "Please enter a valid URL (e.g. https://www.acme.com)",
+                        },
+                      })}
                     />
                   </div>
                 </Field>
