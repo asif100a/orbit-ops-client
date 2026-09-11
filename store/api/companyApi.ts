@@ -2,19 +2,94 @@ import { tagTypes } from "../tagTypes";
 import { baseApi } from "./_base/baseApi";
 
 
-export type CompanyStatus = "pending_subscription" | "active" | "suspended";
+interface Address {
+  street: string;
+  city: string;
+  state: string;
+  country: string;
+  postalCode: string;
+}
+
+interface OrganizationSettings {
+  workingDays: string[]; // e.g. "Monday" | "Tuesday" ...
+  workingHoursStart: string; // "HH:mm"
+  workingHoursEnd: string;   // "HH:mm"
+  defaultCurrency: string;   // e.g. "USD"
+  allowSelfRegistration: boolean;
+}
+
+interface UserRef {
+  _id: string;
+  name: string;
+  email: string;
+  role: "USER" | "ADMIN" | string;
+}
+
+export const companyIndustryOptions = [
+  "Technology / Software",
+  "IT Services",
+  "Finance & Banking",
+  "Healthcare & Medical",
+  "Education & E-Learning",
+  "Manufacturing",
+  "Retail & E-Commerce",
+  "Real Estate",
+  "Construction",
+  "Hospitality & Tourism",
+  "Food & Beverage",
+  "Media & Entertainment",
+  "Telecommunications",
+  "Transportation & Logistics",
+  "Energy & Utilities",
+  "Agriculture",
+  "Legal Services",
+  "Marketing & Advertising",
+  "Consulting",
+  "Non-Profit / NGO",
+  "Government",
+  "Insurance",
+  "Automotive",
+  "Fashion & Apparel",
+  "Pharmaceuticals",
+  "Aerospace & Defense",
+  "Human Resources / Staffing",
+  "Sports & Fitness",
+  "Other",
+] as const;
+
+export type CompanyIndustryType =
+  (typeof companyIndustryOptions)[number];
 
 export interface Company {
-  id: string;
-  name: string;
-  slug?: string;
-  website?: string | null;
-  size?: string | null;
-  country?: string | null;
-  ownerId?: string;
+  address: Address;
+  settings: OrganizationSettings;
   status: CompanyStatus;
-  subscriptionId?: string | null;
+  isDeleted: boolean;
+  _id: string;
+  id?: string;
+  name: string;
+  slug: string;
+  registrationNumber: string;
+  industryType: CompanyIndustryType;
+  size: string;
+  logo?: string;
+  website?: string;
+  email: string;
+  phoneNumber: string;
+  timezone: string; // e.g. "America/Los_Angeles"
+  owner: UserRef;
+  admins: UserRef[];
+  plan: "FREE" | "PRO" | "ENTERPRISE" | string;
+  isActive: boolean;
+  isVerified: boolean;
+  verifiedAt: string | null;
+  onboardingCompleted: boolean;
+  createdAt: string; // ISO 8601 date
+  updatedAt: string; // ISO 8601 date
 }
+
+
+export type CompanyStatus = "pending_subscription" | "active" | "suspended";
 
 export interface CompanyResponse {
   success?: boolean;
@@ -26,10 +101,10 @@ export interface CreateCompanyPayload {
   name: string;
   slug: string;
   registrationNumber: string;
-  industryType: string;
+  industryType: CompanyIndustryType;
   size: string;
-  logo: string;
-  website: string;
+  logo?: string;
+  website?: string;
   email: string;
   phoneNumber: string;
   address: {
@@ -79,6 +154,20 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.company, tagTypes.subscription],
     }),
+    getAllCompany: builder.query<CompanyResponse, void>({
+      query: () => ({
+        url: `${BASE_POINT}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.company],
+    }),
+    getSingleCompany: builder.query<CompanyResponse, string>({
+      query: (companyId) => ({
+        url: `${BASE_POINT}/${companyId}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.company],
+    }),
     createCompany: builder.mutation<CompanyResponse, CreateCompanyPayload>({
       query: (data) => ({
         url: BASE_POINT,
@@ -106,13 +195,32 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.subscription],
     }),
+    updateCompany: builder.mutation<CompanyResponse, Partial<Company> & { id: string }>({
+      query: ({ id, ...data }) => ({
+        url: `${BASE_POINT}/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.company],
+    }),
+    deleteCompany: builder.mutation<CompanyResponse, string>({
+      query: (companyId) => ({
+        url: `${BASE_POINT}/${companyId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [tagTypes.company],
+    }),
   }),
   overrideExisting: true,
 });
 
 export const {
   useGetMyCompanyQuery,
+  useGetAllCompanyQuery,
+  useGetSingleCompanyQuery,
   useCreateCompanyMutation,
   useVerifyCompanyOtpMutation,
   useCreateCheckoutSessionMutation,
+  useUpdateCompanyMutation,
+  useDeleteCompanyMutation,
 } = companyApi;
