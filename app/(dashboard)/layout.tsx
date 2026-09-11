@@ -35,9 +35,7 @@ export default function DashboardLayout({
 
         {/* Page content */}
         <main className="px-4 pb-10 pt-6 sm:px-6 lg:px-8">
-          <div className="mx-auto w-full max-w-[1600px]">
-            {children}
-          </div>
+          <div className="mx-auto w-full max-w-[1600px]">{children}</div>
         </main>
       </div>
     </div>

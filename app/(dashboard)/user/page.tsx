@@ -1,4 +1,5 @@
 import { ActivityFeed } from "@/components/modules/dashboard/_components/ActivityFeed";
+import { CompanySetupCard } from "@/components/modules/dashboard/_components/CompanySetupCard";
 import { DashboardStats } from "@/components/modules/dashboard/_components/DashboardStats";
 import { MyTasks } from "@/components/modules/dashboard/_components/MyTasks";
 import { RecentProjects } from "@/components/modules/dashboard/_components/RecentProjects";
@@ -21,6 +22,8 @@ export default function UserDashboardPage() {
           Here&apos;s what&apos;s happening across your workspace.
         </p>
       </section>
+
+      <CompanySetupCard />
 
       {/* Stats */}
       <DashboardStats />

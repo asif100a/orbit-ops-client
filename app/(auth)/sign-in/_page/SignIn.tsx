@@ -23,11 +23,40 @@ import { useLoginMutation } from "@/store/api/authApi";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAppDispatch } from "@/store/hooks";
+import { setUser } from "@/store/features/authSlice";
 
 type SignInFormValues = {
   email: string;
   password: string;
 };
+
+function getSignInErrorMessage(error: unknown) {
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "data" in error &&
+    typeof (error as { data?: { message?: unknown } }).data?.message ===
+      "string"
+  ) {
+    return (error as { data: { message: string } }).data.message;
+  }
+
+  if (
+    typeof error === "object" &&
+    error !== null &&
+    "error" in error &&
+    typeof (error as { error?: unknown }).error === "string"
+  ) {
+    return (error as { error: string }).error;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "Failed to sign in.";
+}
 
 export default function SignInForm({
   className,
@@ -36,6 +65,7 @@ export default function SignInForm({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -59,15 +89,20 @@ export default function SignInForm({
     try {
       const res = await login(data).unwrap();
       if (res.success) {
+        const token = res.data?.accessToken ?? res.data?.token;
+        const user = res.data?.user ?? res.data;
+
+        if (token) {
+          dispatch(setUser({ user, token }));
+        }
+
         toast.success(res?.message || "Signed in successfully");
-        router.push("/");
+        router.push("/user");
       }
-    } catch (err: any) {
-      const { message } = getErrorMessage(err);
+    } catch (err: unknown) {
+      const message = getSignInErrorMessage(err);
       toast.error(message);
-      setErrorMessage(
-        typeof message === "string" ? message : "Failed to sign in.",
-      );
+      setErrorMessage(message);
     }
   };
 
