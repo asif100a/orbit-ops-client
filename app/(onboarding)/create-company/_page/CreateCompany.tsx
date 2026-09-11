@@ -129,7 +129,7 @@ export default function CreateCompanyPage() {
 
   const onSubmit = async (data: CompanyFormValues) => {
     try {
-      await createCompany({
+      const response = await createCompany({
         name: data.name,
         slug: workspaceSlug,
         registrationNumber: data.registrationNumber,
@@ -145,7 +145,13 @@ export default function CreateCompanyPage() {
         settings: data.settings,
       }).unwrap();
       toast.success(`${data.name} workspace created`);
-      router.push("/billing/subscribe");
+      const companyId = response.data?.id;
+      if (!companyId) {
+        throw new Error("Company was created without an id");
+      }
+      router.push(
+        `/company-otp-verify?companyId=${encodeURIComponent(companyId)}&email=${encodeURIComponent(data.email)}`,
+      );
     } catch {
       toast.error("Unable to create company. Please try again.");
     }

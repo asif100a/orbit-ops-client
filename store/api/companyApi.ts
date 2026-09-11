@@ -54,6 +54,11 @@ export interface CreateCheckoutPayload {
   plan: string;
 }
 
+export interface VerifyCompanyOtpPayload {
+  otp: string;
+  companyId: string;
+}
+
 export interface CheckoutResponse {
   success?: boolean;
   message?: string;
@@ -82,6 +87,14 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.company],
     }),
+    verifyCompanyOtp: builder.mutation<CompanyResponse, VerifyCompanyOtpPayload>({
+      query: (data) => ({
+        url: `${BASE_POINT}/verify-otp`,
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: [tagTypes.company],
+    }),
     createCheckoutSession: builder.mutation<
       CheckoutResponse,
       CreateCheckoutPayload
@@ -100,5 +113,6 @@ export const companyApi = baseApi.injectEndpoints({
 export const {
   useGetMyCompanyQuery,
   useCreateCompanyMutation,
+  useVerifyCompanyOtpMutation,
   useCreateCheckoutSessionMutation,
 } = companyApi;
