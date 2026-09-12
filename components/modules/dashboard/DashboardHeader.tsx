@@ -43,7 +43,7 @@ export function DashboardHeader() {
 
           {/* Notifications */}
           <button className="relative rounded-xl p-2.5 text-[#8B89A8] transition hover:bg-white/[0.05] hover:text-white">
-            <Bell className="h-5 w-5" />
+            <Bell className="h-6 w-6" />
 
             <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-violet-400 shadow-[0_0_8px_rgba(108,99,255,0.8)]" />
           </button>

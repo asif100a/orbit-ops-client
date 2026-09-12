@@ -37,6 +37,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { OTPType } from "@/types/redux.types";
+import { getErrorMessage } from "@/utils";
 
 const OTP_LENGTH = 6;
 const RESEND_COOLDOWN_SECONDS = 180;
@@ -100,7 +101,7 @@ export default function OtpVerify() {
         if (otpType === "forgot-password") {
           router.push("/reset-password");
         } else {
-          router.push("/");
+          router.push("/user");
         }
       }
     } catch (err: any) {
