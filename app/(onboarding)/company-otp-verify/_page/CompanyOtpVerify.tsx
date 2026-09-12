@@ -41,7 +41,7 @@ export default function CompanyOtpVerify() {
     try {
       await verifyCompanyOtp({ companyId, otp }).unwrap();
       toast.success("Company verified successfully");
-      router.push("/billing/subscribe");
+      router.push("/billing/subscribe?companyId=" + companyId);
     } catch (error) {
       const message =
         typeof error === "object" && error && "data" in error

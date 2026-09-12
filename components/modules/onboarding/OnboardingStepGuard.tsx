@@ -29,6 +29,7 @@ export function OnboardingStepGuard({
     isFetching: isCompanyFetching,
   } = useGetMyCompanyQuery(undefined, {
     skip: isAuthLoading || !isAuthenticated,
+    refetchOnMountOrArgChange: true,
   });
 
   const isChecking = isAuthLoading || isCompanyLoading || isCompanyFetching;
