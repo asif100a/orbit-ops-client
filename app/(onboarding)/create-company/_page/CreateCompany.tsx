@@ -298,7 +298,13 @@ export default function CreateCompanyPage() {
                         },
                       })}
                     />
+                    
                   </div>
+                  {errors.website ? (
+                    <p className="text-sm text-red-300">
+                      {errors.website.message}
+                    </p>
+                  ) : null}
                 </Field>
               </div>
 

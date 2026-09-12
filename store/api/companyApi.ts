@@ -178,7 +178,7 @@ export const companyApi = baseApi.injectEndpoints({
     }),
     verifyCompanyOtp: builder.mutation<CompanyResponse, VerifyCompanyOtpPayload>({
       query: (data) => ({
-        url: `${BASE_POINT}/verify-otp`,
+        url: `${BASE_POINT}/verify`,
         method: "POST",
         body: data,
       }),
