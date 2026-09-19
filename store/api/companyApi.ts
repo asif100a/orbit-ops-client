@@ -184,17 +184,6 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.company],
     }),
-    createCheckoutSession: builder.mutation<
-      CheckoutResponse,
-      CreateCheckoutPayload
-    >({
-      query: (data) => ({
-        url: `${BASE_POINT}/checkout`,
-        method: "POST",
-        body: data,
-      }),
-      invalidatesTags: [tagTypes.subscription],
-    }),
     updateCompany: builder.mutation<CompanyResponse, Partial<Company> & { id: string }>({
       query: ({ id, ...data }) => ({
         url: `${BASE_POINT}/${id}`,
@@ -220,7 +209,6 @@ export const {
   useGetSingleCompanyQuery,
   useCreateCompanyMutation,
   useVerifyCompanyOtpMutation,
-  useCreateCheckoutSessionMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
 } = companyApi;

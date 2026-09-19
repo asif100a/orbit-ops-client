@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { OnboardingStepGuard } from "@/components/modules/onboarding/OnboardingStepGuard";
-import { useCreateCheckoutSessionMutation } from "@/store/api/companyApi";
 import {
   ArrowRight,
   Check,
@@ -15,6 +14,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useCreatePaymentMutation } from "@/store/api/paymentApi";
+import { SubscriptionType } from "@/types/index.types";
 
 const plans = [
   {
@@ -40,16 +41,16 @@ const plans = [
 
 export default function SubscribePage() {
   const router = useRouter();
-  const [selectedPlan, setSelectedPlan] = useState("Growth");
-  const [createCheckoutSession, { isLoading: isStartingCheckout }] =
-    useCreateCheckoutSessionMutation();
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionType>('STARTER');
+  const [createPayment, { isLoading: isStartingCheckout }] =
+    useCreatePaymentMutation();
 
   const handleCheckout = async () => {
     try {
-      const response = await createCheckoutSession({
-        plan: selectedPlan,
+      const response = await createPayment({
+        subscriptionType: selectedPlan,
       }).unwrap();
-      const checkoutUrl = response.data?.checkoutUrl ?? response.data?.url;
+      const checkoutUrl = response.data?.url ?? response.data?.url;
 
       toast.success(`${selectedPlan} plan selected`);
 
@@ -92,7 +93,7 @@ export default function SubscribePage() {
             <button
               key={plan.name}
               type="button"
-              onClick={() => setSelectedPlan(plan.name)}
+              onClick={() => setSelectedPlan(plan.name.toUpperCase() as SubscriptionType)}
               className={`relative rounded-2xl border p-5 text-left transition ${
                 isSelected
                   ? "border-violet-400/50 bg-violet-500/[0.08] shadow-[0_0_30px_rgba(108,99,255,0.16)]"
