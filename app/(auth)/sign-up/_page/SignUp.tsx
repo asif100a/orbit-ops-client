@@ -22,6 +22,7 @@ import { useForm } from "react-hook-form";
 import { useRegisterMutation } from "@/store/api/authApi";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
+import toast from "react-hot-toast";
 
 type SignUpFormValues = {
   name: string;
@@ -75,6 +76,7 @@ const SignUpForm = () => {
       const res = await registerUser(payload).unwrap();
       if (res.success) {
         setStatusMessage(res?.message || "Registration successful!");
+        toast.success('An OTP sent to your email')
         router.push(`/otp-verify?email=${data.email}&otpType=register`);
       }
     } catch (err: any) {

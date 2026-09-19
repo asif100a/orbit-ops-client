@@ -25,6 +25,7 @@ export function CompanySetupCard() {
   }
 
   const company = companyResponse?.data ?? null;
+  console.log('company data: ', company)
   const hasNoCompany = isCompanyMissingError(error) || !company;
 
   if (hasNoCompany) {
