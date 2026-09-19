@@ -21,6 +21,10 @@ export function getCompanyRoute(company: Company | null) {
     return "/create-company";
   }
 
+  if (!company.isVerified) {
+    return `/company-otp-verify?companyId=${encodeURIComponent(company._id)}&email=${encodeURIComponent(company.email)}`;
+  }
+
   if (company.status !== "active") {
     return "/billing/subscribe";
   }
