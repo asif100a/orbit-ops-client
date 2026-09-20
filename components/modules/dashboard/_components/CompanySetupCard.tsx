@@ -73,7 +73,7 @@ export function CompanySetupCard() {
           </div>
         </div>
         <Link
-          href={`/verify-company?companyId=${company._id}`}
+          href={`/company-otp-verify?companyId=${company._id}`}
           className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 text-sm font-medium text-white transition hover:bg-violet-500"
         >
           Verify company
