@@ -3,6 +3,7 @@ import { tagTypes } from "../tagTypes";
 import { baseApi } from "./_base/baseApi";
 
 type CreatePaymentPayload = {
+  companyId: string;
   subscriptionType: SubscriptionType;
 };
 
