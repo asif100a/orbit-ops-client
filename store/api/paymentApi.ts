@@ -34,8 +34,9 @@ export const companyApi = baseApi.injectEndpoints({
     }),
     getPayment: builder.query<GetPaymentResponse, {session_id: string}>({
       query: ({session_id}) => ({
-        url: `${BASE_POINT}/session-status/${session_id}`,
+        url: `${BASE_POINT}/session-status`,
         method: "GET",
+        params: {session_id}
       }),
       providesTags: [tagTypes.company, tagTypes.subscription],
     }),

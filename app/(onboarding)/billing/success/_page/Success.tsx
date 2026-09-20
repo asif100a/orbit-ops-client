@@ -1,6 +1,7 @@
 'use client';
 
 import { useGetPaymentQuery } from "@/store/api/paymentApi";
+import getFormattedWord from "@/utils";
 import { ArrowRight, CheckCircle2, CreditCard, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -44,7 +45,7 @@ export default function BillingSuccessPage() {
                 Payment details
               </p>
               <h1 className="mt-1 text-xl font-semibold text-white">
-                {isLoading ? 'Checking your payment' : `${payment?.plan ?? 'Subscription'} plan`}
+                {isLoading ? 'Checking your payment' : `${getFormattedWord(payment?.plan || "") ?? 'Subscription'} plan`}
               </h1>
             </div>
           </div>
