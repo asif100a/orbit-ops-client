@@ -83,7 +83,7 @@ export function CompanySetupCard() {
     );
   }
 
-  if (company.status !== "active") {
+  if (!company.isActive) {
     return (
       <section className="grid gap-4 rounded-2xl border border-teal-300/20 bg-teal-400/[0.06] p-5 sm:grid-cols-[1fr_auto] sm:items-center">
         <div className="flex gap-4">
