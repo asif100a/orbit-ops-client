@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type MouseEvent,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import toast from "react-hot-toast";
@@ -11,9 +17,13 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
-import { useVerifyCompanyOtpMutation } from "@/store/api/companyApi";
+import {
+  useResendCompanyOtpMutation,
+  useVerifyCompanyOtpMutation,
+} from "@/store/api/companyApi";
 
 const OTP_LENGTH = 6;
+const RESEND_COOLDOWN_SECONDS = 180;
 
 export default function CompanyOtpVerify() {
   const router = useRouter();
@@ -22,7 +32,33 @@ export default function CompanyOtpVerify() {
   const email = searchParams.get("email");
   const [otp, setOtp] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
   const [verifyCompanyOtp, { isLoading }] = useVerifyCompanyOtpMutation();
+  const [resendCompanyOtp, { isLoading: isResendLoading }] =
+    useResendCompanyOtpMutation();
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    startCooldown();
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
+
+  function startCooldown() {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    setCooldown(RESEND_COOLDOWN_SECONDS);
+    intervalRef.current = setInterval(() => {
+      setCooldown((previous) => {
+        if (previous <= 1) {
+          if (intervalRef.current) clearInterval(intervalRef.current);
+          return 0;
+        }
+        return previous - 1;
+      });
+    }, 1000);
+  }
 
   async function handleVerify(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -48,6 +84,41 @@ export default function CompanyOtpVerify() {
           ? (error.data as { message?: string })?.message
           : undefined;
       const nextError = message ?? "That code did not work. Please try again.";
+      setErrorMessage(nextError);
+      toast.error(nextError);
+    }
+  }
+
+  async function handleResend(event: MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (cooldown > 0 || isResendLoading) return;
+    if (!companyId) {
+      setErrorMessage("This verification link is missing the company id.");
+      return;
+    }
+    if (!email) {
+      setErrorMessage("This verification link is missing the company email.");
+      return;
+    }
+
+    setErrorMessage(null);
+
+    try {
+      await resendCompanyOtp({
+        companyId,
+        companyEmail: email,
+      }).unwrap();
+      setOtp("");
+      startCooldown();
+      toast.success("A new verification code has been sent");
+    } catch (error) {
+      const message =
+        typeof error === "object" && error && "data" in error
+          ? (error.data as { message?: string })?.message
+          : undefined;
+      const nextError = message ?? "Couldn't resend the code. Please try again.";
       setErrorMessage(nextError);
       toast.error(nextError);
     }
@@ -121,6 +192,22 @@ export default function CompanyOtpVerify() {
             )}
           </Button>
         </form>
+
+        <div className="mt-4 text-center">
+          <Button
+            type="button"
+            variant="ghost"
+            className="text-sm text-[#B7B3D2] hover:bg-white/5 hover:text-white"
+            onClick={handleResend}
+            disabled={cooldown > 0 || isResendLoading}
+          >
+            {isResendLoading
+              ? "Sending..."
+              : cooldown > 0
+                ? `Resend code in ${cooldown}s`
+                : "Resend code"}
+          </Button>
+        </div>
       </section>
 
       <aside className="rounded-2xl border border-white/[0.07] bg-[#0d0d18]/80 p-6">

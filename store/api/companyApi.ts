@@ -1,7 +1,6 @@
 import { tagTypes } from "../tagTypes";
 import { baseApi } from "./_base/baseApi";
 
-
 interface Address {
   street: string;
   city: string;
@@ -13,8 +12,8 @@ interface Address {
 interface OrganizationSettings {
   workingDays: string[]; // e.g. "Monday" | "Tuesday" ...
   workingHoursStart: string; // "HH:mm"
-  workingHoursEnd: string;   // "HH:mm"
-  defaultCurrency: string;   // e.g. "USD"
+  workingHoursEnd: string; // "HH:mm"
+  defaultCurrency: string; // e.g. "USD"
   allowSelfRegistration: boolean;
 }
 
@@ -57,8 +56,7 @@ export const companyIndustryOptions = [
   "Other",
 ] as const;
 
-export type CompanyIndustryType =
-  (typeof companyIndustryOptions)[number];
+export type CompanyIndustryType = (typeof companyIndustryOptions)[number];
 
 export interface Company {
   address: Address;
@@ -87,7 +85,6 @@ export interface Company {
   createdAt: string; // ISO 8601 date
   updatedAt: string; // ISO 8601 date
 }
-
 
 export type CompanyStatus = "pending_subscription" | "active" | "suspended";
 
@@ -176,7 +173,10 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.company],
     }),
-    verifyCompanyOtp: builder.mutation<CompanyResponse, VerifyCompanyOtpPayload>({
+    verifyCompanyOtp: builder.mutation<
+      CompanyResponse,
+      VerifyCompanyOtpPayload
+    >({
       query: (data) => ({
         url: `${BASE_POINT}/verify`,
         method: "POST",
@@ -184,7 +184,20 @@ export const companyApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [tagTypes.company],
     }),
-    updateCompany: builder.mutation<CompanyResponse, Partial<Company> & { id: string }>({
+    resendCompanyOtp: builder.mutation<
+      any,
+      { companyId: string; companyEmail: string }
+    >({
+      query: (data) => ({
+        url: `${BASE_POINT}/resend-company-otp`,
+        method: "POST",
+        body: data,
+      }),
+    }),
+    updateCompany: builder.mutation<
+      CompanyResponse,
+      Partial<Company> & { id: string }
+    >({
       query: ({ id, ...data }) => ({
         url: `${BASE_POINT}/${id}`,
         method: "PUT",
@@ -209,6 +222,7 @@ export const {
   useGetSingleCompanyQuery,
   useCreateCompanyMutation,
   useVerifyCompanyOtpMutation,
+  useResendCompanyOtpMutation,
   useUpdateCompanyMutation,
   useDeleteCompanyMutation,
 } = companyApi;
