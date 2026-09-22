@@ -1,17 +1,49 @@
 "use client";
 
-import { useGetMyCompanyQuery } from "@/store/api/companyApi";
+import {
+  useGetMyCompanyQuery,
+  useResendCompanyOtpMutation,
+} from "@/store/api/companyApi";
 import { isCompanyMissingError } from "@/components/modules/onboarding/onboarding.utils";
 import { ArrowRight, Building2, CreditCard, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { getErrorMessage } from "@/utils";
 
 export function CompanySetupCard() {
+  const router = useRouter();
+  const [resendCompanyOtp, { isLoading: isResendLoading }] =
+    useResendCompanyOtpMutation();
   const {
     data: companyResponse,
     error,
     isLoading,
     isFetching,
   } = useGetMyCompanyQuery();
+
+  const company = companyResponse?.data ?? null;
+  // console.log('company data: ', company)
+  const hasNoCompany = isCompanyMissingError(error) || !company;
+
+  const handleVerify = async () => {
+    if (isResendLoading) return;
+    if (!company || !company._id) return;
+    try {
+      await resendCompanyOtp({
+        companyId: company._id,
+        companyEmail: company.email,
+      }).unwrap();
+      router.push(
+        `/company-otp-verify?companyId=${encodeURIComponent(company._id)}&email=${encodeURIComponent(company.email)}`,
+      );
+      toast.success("A new verification code has been sent");
+    } catch (error) {
+      const { message } = getErrorMessage(error);
+      const nextError = message ?? "Couldn't resend the code. Please try again.";
+      toast.error(nextError);
+    }
+  };
 
   if (isLoading || isFetching) {
     return (
@@ -23,10 +55,6 @@ export function CompanySetupCard() {
       </section>
     );
   }
-
-  const company = companyResponse?.data ?? null;
-  // console.log('company data: ', company)
-  const hasNoCompany = isCompanyMissingError(error) || !company;
 
   if (hasNoCompany) {
     return (
@@ -56,7 +84,7 @@ export function CompanySetupCard() {
     );
   }
 
-  if(!company.isVerified) {
+  if (!company.isVerified) {
     return (
       <section className="grid gap-4 rounded-2xl border border-violet-300/20 bg-violet-500/[0.07] p-5 sm:grid-cols-[1fr_auto] sm:items-center">
         <div className="flex gap-4">
@@ -68,17 +96,19 @@ export function CompanySetupCard() {
               Verify your company workspace
             </h2>
             <p className="mt-1 max-w-2xl text-sm leading-6 text-[#AAA7C8]">
-              Your company workspace is created, but it needs to be verified before you can access owner-level features.
+              Your company workspace is created, but it needs to be verified
+              before you can access owner-level features.
             </p>
           </div>
         </div>
-        <Link
-          href={`/company-otp-verify?companyId=${company._id}`}
+        <button
+          onClick={handleVerify}
+          disabled={isResendLoading}
           className="inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-violet-600 px-4 text-sm font-medium text-white transition hover:bg-violet-500"
         >
-          Verify company
+          {isResendLoading ? "Sending..." : "Verify company"}
           <ArrowRight className="h-4 w-4" />
-        </Link>
+        </button>
       </section>
     );
   }
