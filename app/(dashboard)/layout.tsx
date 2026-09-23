@@ -1,6 +1,9 @@
 import { DashboardHeader } from "@/components/modules/dashboard/DashboardHeader";
 import { Sidebar } from "@/components/modules/dashboard/Sidebar";
+import { useAuth } from "@/context/AuthProvider";
 import type { Metadata } from "next";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export const metadata: Metadata = {
   title: {
@@ -16,6 +19,21 @@ export default function DashboardLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { isAuthenticated, loading } = useAuth();
+  const router = useRouter()
+
+  useEffect(() => {
+    if(!isAuthenticated && !loading) {
+      router.push('/(auth)/sign-in')
+    }
+  }, [isAuthenticated, loading])
+
+  if(loading) {
+    <div>
+      <h1>Loading content...</h1>
+    </div>
+  }
+
   return (
     <div className="min-h-screen bg-[#080812] text-white">
       {/* Background atmosphere */}

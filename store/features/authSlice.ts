@@ -8,6 +8,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   user: null,
   token: null,
+  dashboardMode: "user",
 };
 
 const authSlice = createSlice({
@@ -32,6 +33,11 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
+      state.dashboardMode = "user";
+    },
+
+    setDashboardMode: (state, action) => {
+      state.dashboardMode = action.payload;
     }
   }
 });
@@ -39,7 +45,8 @@ const authSlice = createSlice({
 // Selectors
 export const selectUser = (state: RootState) => state.auth.user;
 export const selectToken = (state: RootState) => state.auth.token;
+export const selectDashboardMode = (state: RootState) => state.auth.dashboardMode;
 
-export const { setUser, logout } = authSlice.actions;
+export const { setUser, logout, setDashboardMode } = authSlice.actions;
 
 export default authSlice.reducer;

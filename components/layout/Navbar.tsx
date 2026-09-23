@@ -22,8 +22,6 @@ function handleScroll(sectionId: string) {
 
 export default function Navbar() {
   const { isAuthenticated, loading } = useAuth();
-  console.log("isAuthenticated from the Navbar: ", isAuthenticated);
-  console.log("loading from the Navbar: ", loading);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[5%] h-[68px] bg-[#070810]/85 backdrop-blur-xl border-b border-white/[0.07]">

@@ -3,18 +3,22 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, Settings } from "lucide-react";
-import { USER_NAVIGATION } from "@/app/assets/dashboard.data";
+import { ADMIN_NAVIGATION, USER_NAVIGATION } from "@/app/assets/dashboard.data";
 import Logo from "../Logo";
 import { Button } from "@/components/ui/button";
 import Swal from "sweetalert2";
 import { useLogoutMutation } from "@/store/api/authApi";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "@/utils";
+import { useAppSelector } from "@/store/hooks";
+import { selectDashboardMode } from "@/store/features/authSlice";
 
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter()
+  const dashboardMode = useAppSelector(selectDashboardMode);
   const [logout, { isLoading }] = useLogoutMutation();
+  const navigation = dashboardMode === "admin" ? ADMIN_NAVIGATION : USER_NAVIGATION;
 
   const handleLogout = async () => {
     const swalWithBootstrapButtons = Swal.mixin({
@@ -72,7 +76,7 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-6">
         <div className="space-y-7">
-          {USER_NAVIGATION.map((section) => (
+          {navigation.map((section) => (
             <div key={section.label}>
               <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#5F5D78]">
                 {section.label}
@@ -137,7 +141,7 @@ export function Sidebar() {
       {/* Bottom section */}
       <div className="border-t border-white/[0.06] p-3">
         <Link
-          href="/user/settings"
+          href={dashboardMode === "admin" ? "/admin/settings" : "/user/settings"}
           className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm text-[#8B89A8] transition hover:bg-white/[0.035] hover:text-white"
         >
           <Settings className="h-[17px] w-[17px]" />
@@ -152,22 +156,6 @@ export function Sidebar() {
           <LogOut className="h-[17px] w-[17px]" />
           Log out
         </Button>
-
-        {/* <div className="mt-2 flex items-center gap-3 rounded-xl bg-white/[0.025] p-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-teal-400 text-xs font-bold">
-            AS
-          </div>
-
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium">
-              Asif Sheikh
-            </p>
-
-            <p className="truncate text-[11px] text-[#8B89A8]">
-              Administrator
-            </p>
-          </div>
-        </div> */}
       </div>
     </aside>
   );

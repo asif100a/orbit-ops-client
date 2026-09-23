@@ -15,6 +15,7 @@ export interface AuthState {
   isAuthenticated: boolean;
   user: UserPayload | null;
   token: string | null;
+  dashboardMode: "user" | "admin";
 }
 
 export interface RefreshTokenResponse {
