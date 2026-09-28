@@ -10,6 +10,8 @@ import {
   selectUser,
   setDashboardMode,
 } from "@/store/features/authSlice";
+import { useGetMyProfileQuery } from "@/store/api/userApi";
+import { UserType } from "@/types/index.types";
 
 export function DashboardHeader() {
   const router = useRouter();
@@ -19,7 +21,9 @@ export function DashboardHeader() {
   const { data: companyResponse } = useGetMyCompanyQuery();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
+
   const company = companyResponse?.data ?? null;
+
   const canAccessAdmin = company?.isActive === true && company.status === "active";
   const userName = typeof user?.name === "string" ? user.name : "OrbitOps user";
   const userEmail = typeof user?.email === "string" ? user.email : "No email available";
@@ -30,6 +34,9 @@ export function DashboardHeader() {
     .join("")
     .slice(0, 2)
     .toUpperCase();
+
+  const {data: profileRes} = useGetMyProfileQuery({});
+  const profile: UserType | undefined = profileRes?.data;
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {

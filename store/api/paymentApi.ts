@@ -23,7 +23,7 @@ type GetPaymentResponse = {
 
 const BASE_POINT = "/payment";
 
-export const companyApi = baseApi.injectEndpoints({
+export const paymentApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createPayment: builder.mutation<CreatePaymentResponse, CreatePaymentPayload>({
       query: (data) => ({
@@ -47,4 +47,4 @@ export const companyApi = baseApi.injectEndpoints({
 export const {
   useCreatePaymentMutation,
   useGetPaymentQuery
-} = companyApi;
+} = paymentApi;
