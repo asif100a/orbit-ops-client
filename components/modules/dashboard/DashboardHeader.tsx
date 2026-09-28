@@ -7,7 +7,6 @@ import { useGetMyCompanyQuery } from "@/store/api/companyApi";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
   selectDashboardMode,
-  selectUser,
   setDashboardMode,
 } from "@/store/features/authSlice";
 import { useGetMyProfileQuery } from "@/store/api/userApi";
@@ -16,18 +15,28 @@ import { UserType } from "@/types/index.types";
 export function DashboardHeader() {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const user = useAppSelector(selectUser);
   const dashboardMode = useAppSelector(selectDashboardMode);
   const { data: companyResponse } = useGetMyCompanyQuery();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
   const company = companyResponse?.data ?? null;
+  console.log("Company: ", company)
 
-  const canAccessAdmin = company?.isActive === true && company.status === "active";
-  const userName = typeof user?.name === "string" ? user.name : "OrbitOps user";
-  const userEmail = typeof user?.email === "string" ? user.email : "No email available";
-  const userRole = typeof user?.role === "string" ? user.role : "USER";
+   const {data: profileRes} = useGetMyProfileQuery({});
+  const profile: UserType | undefined = profileRes?.data;
+  console.log("profile id: ", profile?._id)
+
+  const userName = profile?.name || "OrbitOps user";
+  const userEmail = profile?.email || "No email available";
+  const canAccessAdmin =
+    company?.isActive === true &&
+    company.isVerified === true &&
+    Boolean(
+      profile?._id &&
+        company.admins.some((admin: string) => admin === profile._id),
+    );
+  const userRole = typeof profile?.role === "string" ? profile.role : "USER";
   const initials = userName
     .split(" ")
     .map((part) => part[0])
@@ -35,8 +44,7 @@ export function DashboardHeader() {
     .slice(0, 2)
     .toUpperCase();
 
-  const {data: profileRes} = useGetMyProfileQuery({});
-  const profile: UserType | undefined = profileRes?.data;
+ 
 
   useEffect(() => {
     const handlePointerDown = (event: MouseEvent) => {

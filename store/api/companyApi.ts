@@ -76,7 +76,7 @@ export interface Company {
   phoneNumber: string;
   timezone: string; // e.g. "America/Los_Angeles"
   owner: UserRef;
-  admins: UserRef[];
+  admins: string[];
   plan: "FREE" | "PRO" | "ENTERPRISE" | string;
   isActive: boolean;
   isVerified: boolean;
